@@ -6,12 +6,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./member1/layouts/MainLayout";
 import Home from './member1/pages/Home';
+import EventDetails from "./member1/pages/EventDetails";
+
 function App() {
 return(
   <BrowserRouter>
   <MainLayout>
   <Routes>
     <Route path="/" element={<Home />} />
+    <Route path="/event/:id" element={<EventDetails />} />
   </Routes>
   </MainLayout>
   </BrowserRouter>

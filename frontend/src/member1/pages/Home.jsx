@@ -1,3 +1,4 @@
+
 function Home(){
     return(
        <main>
@@ -48,6 +49,7 @@ function Home(){
                   </div>
             </div>
         </section>
+        
        </main>
     );
 }
