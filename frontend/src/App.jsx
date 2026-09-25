@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./member1/layouts/MainLayout";
 import Home from './member1/pages/Home';
 import EventDetails from "./member1/pages/EventDetails";
+import LoginForm from './member1/components/LoginForm';
 
 function App() {
 return(
@@ -15,9 +16,10 @@ return(
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/event/:id" element={<EventDetails />} />
+    <Route path="/login" element={<LoginForm />} />
   </Routes>
   </MainLayout>
   </BrowserRouter>
 );
 }
-export default App
+export default App;
