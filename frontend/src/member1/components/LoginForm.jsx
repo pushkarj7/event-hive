@@ -1,5 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 const LoginForm =() => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -165,12 +166,13 @@ const LoginForm =() => {
                 </div>
                 <p className="mt-6 text-center text-sm text-slate-500">
                     Don't have an account?{" "}
-                    <button
+                    <Link
+                        to="/register"
                         type="button"
                         className="font-semibold text-blue-600 transition hover:text-blue-700 hover:underline"
                     >
                         Sign up
-                    </button>
+                    </Link>
                     </p>
             </div>
         </form>

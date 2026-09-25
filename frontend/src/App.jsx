@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./member1/layouts/MainLayout";
 import Home from './member1/pages/Home';
 import LoginForm from './member1/components/LoginForm';
+import Register from "./member2/pages/Register";
 function App() {
 return(
   <BrowserRouter>
@@ -14,6 +15,7 @@ return(
   <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/login" element={<LoginForm />} />
+    <Route path="/register" element={<Register />} />
   </Routes>
   </MainLayout>
   </BrowserRouter>
