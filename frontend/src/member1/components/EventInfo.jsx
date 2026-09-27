@@ -1,22 +1,46 @@
-function EventInfo(){
+function EventInfo({event}){
     return(
-        <div>
-          <span>Music</span>
-          <h1>Summer Music Festival</h1>
-          <div>
-            <span>14 October 2026</span>
-            <span>New Delhi | 6 PM Onwards</span>
+        <div className="flex flex-col">
+          {/* category */}
+          <span className="w-fit rounde-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+             {event.category}
+           </span>
+           {/* title */}
+           <h1 className="mt-4 text-3xl font-bold tracking-tight text-text sm:text-4xl lg:text-5xl ">
+            {event.title}
+           </h1>
+           {/* date & time */}
+           <div className="mt-6 flex items-centergap-3 text-text-secondary">
+           <span>📅</span>
+           <span>
+            {event.date} . {event.time}
+           </span>
           </div>
-          <div>
-            <span>rating:6</span>
+          {/* venue */}
+          <div className="mt-3 flex items-center gap-3 text-text-secondary">
+           <span>📍</span>
+           <span>
+            {event.venue}
+           </span>
           </div>
-          <div>
-            <span> Price:600</span>
+          {/* rating */}
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-yellow-500">★</span>
+            <span className="font-semibold text-text">
+              {event.rating}
+              </span>
+              <span className="text-text-secondary">
+               Rating
+              </span>
           </div>
-            <p>
-        Experience an unforgettable evening filled with live music,
-        entertainment, and great moments with your friends and family.
-      </p>
+          {/* price */}
+          <p className="mt-5 text-2xl font-bold text-primary">
+           {event.price}
+          </p>
+          {/* Description */}
+          <p className="mt-5 max-w-2xl leading-7 text-text-secondary">
+            {event.description}
+          </p>
         </div>
 
     );
