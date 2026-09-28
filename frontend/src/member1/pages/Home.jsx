@@ -1,56 +1,193 @@
-
+import Hero from '../components/Hero';
+import EventCard from '../components/EventCard';
+import {Laptop,Music,Briefcase,Palette,Drama,Trophy,ArrowRight} from "lucide-react"
 function Home(){
-    return(
-       <main>
-        <section className="bg-background px-6 py-16 md:px-12 lg:px-20">
-            <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
-                {/* left content */}
-                <div>
-                    <span className="inline-block rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-primary">
-                        YOUR EVENTS. YOUR MOMENTS. 
+    const categories=[
+        {
+            id:1,
+            name:"Technology",
+            icon:Laptop,
+        },
+        {
+            id:2,
+            name:"Concerts",
+            icon:Music,
+        },
+        {
+            id:3,
+            name:"Business",
+            icon:Briefcase,
+        },
+        {
+            id:4,
+            name:"Art",
+            icon:Palette,
+        },
+        {
+            id:5,
+            name:"Theatre",
+            icon:Drama,
+        },
+        {
+            id:6,
+            name:"Sports",
+            icon:Trophy,
+        },
+    ];
+    const events= [
+        {
+            id:1,
+            title:"Tech",
+            location:"New Delhi",
+            price:499,
+            category:"Tech",
+            date:"2026-10-25",
+            rating:4.5,
+            image:"https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+        },
+        {
+            id:2,
+            title:"Concert",
+            location:"New York",
+            price:999,
+            category:"Concert",
+            date:"2026-10-26",
+            rating:4.9,
+            image:"https://images.unsplash.com/photo-1501386761578-eac5c94b800a",
+        },
+        {
+            id:3,
+            title:"Conference",
+            location:"New York",
+            price:1299,
+            category:"Conference",
+            date:"2026-10-27",
+            rating:4.2,
+            image: "https://images.unsplash.com/photo-1585699324551-f6c309eedeca",
+        },
+        {
+            id:4,
+            title:"Exibition",
+            location:"New York",
+            price:499,
+            category:"Exibition",
+            date:"2026-10-25",
+            rating:3.4,
+            image: "https://images.unsplash.com/photo-1472653431158-6364773b2a56",
+        },
+        {
+            id:5,
+            title:"Theatre",
+            location:"New York",
+            price:999,
+            category:"Theatre",
+            date:"2026-10-26",
+            rating:4.7,
+            image: "https://images.unsplash.com/photo-1472653431158-6364773b2a56",
+             }, 
+    ];
+      return(
+       <>
+        <Hero />
+        {/* featured events */}
+        <section className="bg-background px-6 py-12">
+           <div className="mx-auto max-w-7xl">
+            {/* section header  */}
+             <div className="mb-8 grid gap-4 md:grid-cols-3 md:items-end">
+            {/* left content  */}
+            <div>
+             <p className="text-sm font-semibold uppercase tracking-wide text-text-secondary">
+              Don't miss out
+             </p>
+              <button className="mt-3 hidden items-center gap-2 font-semibold text-primary transition-colors hover:text-primary-dark md:flex">
+             View All
+             <ArrowRight size={16}/>
+              </button>
+          </div> 
+          {/* center content */}
+           <div className="md:text-center">
+             <h2 className="text-3xl font-bold text-text">
+              Event Categories
+             </h2>        
+            </div>
+            {/* right content */}
+             <p className="text-sm leading-6 text-text-secondary md:text-right">
+              Explore some of the most popular events happening around you.
+             </p>
+            </div>
+         {/* categories */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {categories.map((category) =>{
+             const Icon =category.icon;
+             return(
+                <button
+                key={category.id}
+                className="group flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-md"
+                >
+                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF2FF]
+                     text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                        <Icon size={24}/>
+                 </div>
+                 <span className="mt-4 text-sm font-semibold text-text">
+                     {category.name}                 
                     </span>
-                    <h1 className="mt-6 text-4xl font-bold leading-tight text-text md:text-5xl lg:text-6xl">
-                      Discover Events  
-                    </h1>
-                    <p className="mt-6 max-w-xl text-lg leading-8 text-text-secondary">
-                        Find, explore and book amazing events happening around you.
-                        From concerts and workshops to conferences and more. 
+                 </button>
+                 );
+              })}
+          </div>
+          </div>
+          </section>
+          {/* trending events */}
+        <section className="bg-background px-6 py-16">
+            <div className="mx-auto max-w-7xl">
+              <div className='mb-8 flex items-end justify-between'>
+                <div>
+                    <p className='text-sm font-semibold uppercase tracking-wide text-text-secondary'> 
+                      Discover What's Happening
                     </p>
-                    {/* buttons */}
-                    <div className="mt-8 flex flex-wrap gap-4">
-                        <button className="rounded-xl bg-primary px-6 py-3 font-semibold text-white transition hover:bg-primary-dark">
-                            Explore Events
-                        </button>
-                        <button className="rounded-xl border border-primary px-6 py-3 font-semibold text-primary transition hover:bg-indigo-50">
-                            Create Event
-                        </button>
-                    </div>
+                    <h2 className='mt-2 text-3xl font-bold text-text'>
+                     Trending Events
+                    </h2>
                 </div>
-                  {/* right visual */}
-                  <div className="relative flex justify-center">
-                    <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl">
-                        <div className="h-48 rounded-2xl bg-linear-to-br from-primary to-accent">
-                        </div>
-                        <div className="mt-5">
-                            <p className="text-sm font-medium text-text-secondary">
-                                Featured Events
-                            </p>
-                            <h2 className="mt-1 text-2xl font-bold text-text">
-                                Music & Live Concert
-                            </h2>
-                            <p className="mt-2 text-text-secondary">
-                                New Delhi &nbsp;. &nbsp; 28 Sept
-                            </p>
-                            <button className="mt-5 w-full rounded-xl bg-text py-3 font-semibold text-white transition hover:bg-primary-dark">
-                                View Event
-                            </button>
-                        </div>
-                    </div>
-                  </div>
+              <button className='hidden items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary-dark md:flex'>
+              View All
+              <ArrowRight size={16}/>
+              </button>
+            </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+             {events.map((event)=>(
+            <EventCard 
+            key={event.id}
+             title={event.title}
+             location={event.location}
+             price={event.price}
+             category={event.category}
+             date={event.date}
+             rating={event.rating}
+             image={event.image}
+            />
+        ))}
+        </div>
+        </div>
+        </section>
+         {/* cta section */}
+        <section className='px-3 py-16 sm:px-4 md:px-6'>
+            <div className="w-full">
+                <div className='overflow-hidden rounded-2xl bg-primary px-6 py-12 text-center shadow-lg sm:px-10 md:py-16'>
+                 <h2 className='mx-auto max-w-2xl text-3xl font-bold text-white md:text-4xl'>
+                  Ready to Find Your Next Event?
+                 </h2>
+                 <p className="mx-auto mt-4 max-w-xl text-sm leading-e6 text-indigo-100 md:text-base">
+                   Discover exciting events,connect with amazing experinences,and book your tickets with us.
+                 </p>
+                 <button className='mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md'>
+                    Explore Events
+                    <ArrowRight size={16}/>
+                 </button>
+                </div>
             </div>
         </section>
-        
-       </main>
+       </>
     );
 }
 export default Home;
