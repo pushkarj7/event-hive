@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Menu, X, Search, ChevronDown, User, LayoutDashboard, Ticket, PlusCircle, LogOut } from "lucide-react";
+import { Menu, X, Search, ChevronDown, User, LayoutDashboard, Ticket, PlusCircle, LogOut, Heart } from "lucide-react";
 import EventHiveLogo from "./EventHiveLogo";
 import { useAppStore } from "../../store/EventContext";
 
@@ -14,7 +14,7 @@ const navigationLinks = [
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { searchQuery, setSearchQuery, isAuthenticated, user, logout } = useAppStore();
+  const { searchQuery, setSearchQuery, isAuthenticated, user, wishlist, logout } = useAppStore();
   const navigate = useNavigate();
 
   const linkClasses = ({ isActive }) =>
@@ -152,6 +152,19 @@ function Navbar() {
                     <Ticket size={15} className="text-slate-400" /> My Bookings
                   </Link>
                   <Link
+                    to="/wishlist"
+                    className="flex items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <Heart size={15} className="text-rose-500 fill-rose-500" /> Wishlist
+                    </span>
+                    {wishlist?.length > 0 && (
+                      <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-600">
+                        {wishlist.length}
+                      </span>
+                    )}
+                  </Link>
+                  <Link
                     to="/create-event"
                     className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
                   >
@@ -273,6 +286,20 @@ function Navbar() {
                       className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700"
                     >
                       My Bookings
+                    </Link>
+                    <Link
+                      to="/wishlist"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-slate-700"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Heart size={15} className="text-rose-500 fill-rose-500" /> Wishlisted Events
+                      </span>
+                      {wishlist?.length > 0 && (
+                        <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">
+                          {wishlist.length}
+                        </span>
+                      )}
                     </Link>
                     <button
                       type="button"

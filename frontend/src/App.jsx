@@ -21,6 +21,7 @@ import Register from "./member2/pages/Register";
 import Dashboard from "./member2/pages/Dashboard";
 import MyBookings from "./member2/pages/MyBookings";
 import Profile from "./member2/pages/Profile";
+import Wishlist from "./member2/pages/Wishlist";
 import CreateEvent from "./member2/pages/CreateEvent";
 import NotFound from "./member2/pages/NotFound";
 import BookingCancelled from "./member2/pages/BookingCancelled";
@@ -63,6 +64,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute>
+              <Wishlist />
             </ProtectedRoute>
           }
         />

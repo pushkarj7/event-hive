@@ -1,11 +1,11 @@
-import { Home, CalendarDays, PlusCircle, Ticket, Users, MessageSquare, BarChart3, Settings, Plus } from "lucide-react";
+import { Home, CalendarDays, PlusCircle, Ticket, Users, MessageSquare, BarChart3, Settings, Plus, Heart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { notifications } = useAppStore();
+  const { notifications, wishlist } = useAppStore();
 
   const isActive = (path) => location.pathname === path;
 
@@ -40,6 +40,7 @@ const Sidebar = () => {
         <div className="space-y-1">
           {navItem("Dashboard", Home, "/dashboard")}
           {navItem("My Events", CalendarDays, "/events")}
+          {navItem("Wishlist", Heart, "/wishlist", wishlist?.length > 0 ? wishlist.length : null)}
           {navItem("Create Event", PlusCircle, "/create-event")}
           {navItem("Bookings", Ticket, "/my-bookings")}
           {navItem("Attendees", Users, "/dashboard")}

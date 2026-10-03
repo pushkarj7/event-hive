@@ -14,6 +14,7 @@ import { ALL_EVENTS, CATEGORIES, CITIES } from "../data/eventsData";
 import EventListingCard from "../components/EventListingCard";
 import EventFilter from "../components/EventFilter";
 import BookingModal from "../components/BookingModal";
+import { useAppStore } from "../../store/EventContext";
 
 export default function Events() {
   const [searchParams] = useSearchParams();
@@ -41,12 +42,8 @@ export default function Events() {
   const [sortBy, setSortBy] = useState("popular");
   const [viewMode, setViewMode] = useState("list"); // 'list' or 'grid'
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [favorites, setFavorites] = useState({});
+  const { wishlist, toggleWishlist } = useAppStore();
   const [selectedEventForBooking, setSelectedEventForBooking] = useState(null);
-
-  const toggleFavorite = (id) => {
-    setFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const handleResetFilters = () => {
     setSearchQuery("");
@@ -362,8 +359,8 @@ export default function Events() {
                     key={event.id}
                     event={event}
                     viewMode="grid"
-                    isFavorite={!!favorites[event.id]}
-                    onToggleFavorite={toggleFavorite}
+                    isFavorite={wishlist.some((id) => String(id) === String(event.id))}
+                    onToggleFavorite={() => toggleWishlist(event.id)}
                     onBookNow={(evt) => setSelectedEventForBooking(evt)}
                   />
                 ))}
@@ -375,8 +372,8 @@ export default function Events() {
                     key={event.id}
                     event={event}
                     viewMode="list"
-                    isFavorite={!!favorites[event.id]}
-                    onToggleFavorite={toggleFavorite}
+                    isFavorite={wishlist.some((id) => String(id) === String(event.id))}
+                    onToggleFavorite={() => toggleWishlist(event.id)}
                     onBookNow={(evt) => setSelectedEventForBooking(evt)}
                   />
                 ))}

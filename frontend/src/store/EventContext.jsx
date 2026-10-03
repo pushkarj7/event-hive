@@ -17,6 +17,14 @@ export const AppProvider = ({ children }) => {
   const [bookings, setBookings] = useState(() => {
     try { const s = localStorage.getItem("eh_bookings"); return s ? JSON.parse(s) : initialBookings; } catch { return initialBookings; }
   });
+  const [wishlist, setWishlist] = useState(() => {
+    try {
+      const s = localStorage.getItem("eh_wishlist");
+      return s ? JSON.parse(s) : ["evt-1", "evt-5"];
+    } catch {
+      return ["evt-1", "evt-5"];
+    }
+  });
   const [weekly] = useState(defaultWeekly);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,6 +55,27 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => { localStorage.setItem("eh_events", JSON.stringify(events)); }, [events]);
   useEffect(() => { localStorage.setItem("eh_bookings", JSON.stringify(bookings)); }, [bookings]);
+  useEffect(() => { localStorage.setItem("eh_wishlist", JSON.stringify(wishlist)); }, [wishlist]);
+
+  const toggleWishlist = (eventId) => {
+    setWishlist((prev) => {
+      const idStr = String(eventId);
+      const exists = prev.some((id) => String(id) === idStr);
+      if (exists) {
+        return prev.filter((id) => String(id) !== idStr);
+      } else {
+        return [...prev, eventId];
+      }
+    });
+  };
+
+  const removeFromWishlist = (eventId) => {
+    setWishlist((prev) => prev.filter((id) => String(id) !== String(eventId)));
+  };
+
+  const isWishlisted = (eventId) => {
+    return wishlist.some((id) => String(id) === String(eventId));
+  };
 
   const addEvent = (ev) => {
     const newEv = { id: Date.now(), status: "Upcoming", rating: 4.5, ...ev };
@@ -131,7 +160,7 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <EventContext.Provider value={{ events, bookings, weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking, updateProfile, user, authUser, isAuthenticated, login, logout, notifications, stats, filteredEvents, filteredBookings }}>
+    <EventContext.Provider value={{ events, bookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted, weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking, updateProfile, user, authUser, isAuthenticated, login, logout, notifications, stats, filteredEvents, filteredBookings }}>
       {children}
     </EventContext.Provider>
   );

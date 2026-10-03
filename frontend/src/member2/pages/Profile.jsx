@@ -1,19 +1,74 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAppStore } from "../../store/EventContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import StatCard from "../../member1/components/StatCard";
 import BookingsOverview from "../../member1/components/BookingsOverview";
 import UpcomingEvents from "../../member1/components/UpcomingEvents";
 import LatestBookings from "../../member1/components/LatestBookings";
-import { CalendarDays, Ticket, Users, IndianRupee, LayoutDashboard, Save, LogOut, Trash2, UserRound, Mail, Phone, Sparkles, Crown, ArrowUpRight, Zap } from "lucide-react";
+import BookingModal from "../../member1/components/BookingModal";
+import { ALL_EVENTS } from "../../member1/data/eventsData";
+import {
+  CalendarDays,
+  Ticket,
+  Users,
+  IndianRupee,
+  LayoutDashboard,
+  Save,
+  LogOut,
+  Trash2,
+  UserRound,
+  Mail,
+  Phone,
+  Sparkles,
+  Crown,
+  ArrowUpRight,
+  Zap,
+  Heart,
+  Calendar,
+  MapPin,
+  Star,
+} from "lucide-react";
 
 const Profile = () => {
-  const { user, stats, bookings, updateProfile, logout } = useAppStore();
+  const { user, stats, bookings, wishlist, removeFromWishlist, events, updateProfile, logout } = useAppStore();
   const navigate = useNavigate();
-  const [tab, setTab] = useState("profile");
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState(() => searchParams.get("tab") || "profile");
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ name: user.name, email: user.email || "", phone: user.phone || "" });
   const [saved, setSaved] = useState(false);
+  const [selectedEventForBooking, setSelectedEventForBooking] = useState(null);
+
+  // Combine ALL_EVENTS with any organizer custom events
+  const allAvailableEvents = useMemo(() => {
+    const list = [...ALL_EVENTS];
+    if (Array.isArray(events)) {
+      events.forEach((ce) => {
+        if (!list.some((e) => String(e.id) === String(ce.id))) {
+          list.push({
+            id: ce.id || Date.now(),
+            title: ce.title,
+            category: ce.category || "General",
+            date: ce.date || "2026-12-01",
+            formattedDate: ce.formattedDate || ce.date || "Upcoming",
+            location: ce.location || "Venue, India",
+            price: Number(ce.price) || 999,
+            rating: ce.rating || 4.8,
+            image: ce.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+            description: ce.description || "Live event on Event Hive",
+          });
+        }
+      });
+    }
+    return list;
+  }, [events]);
+
+  // Find all wishlisted events
+  const wishlistedEvents = useMemo(() => {
+    return allAvailableEvents.filter((ev) =>
+      wishlist.some((id) => String(id) === String(ev.id))
+    );
+  }, [allAvailableEvents, wishlist]);
 
   const handleSave = () => {
     if (!form.name.trim()) return;
@@ -45,11 +100,9 @@ const Profile = () => {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-8">
-        {/* Hero Header Card — glass + gradient border */}
+        {/* Hero Header Card */}
         <div className="group relative overflow-hidden rounded-[28px] border border-white/60 bg-white/80 p-7 shadow-[0_8px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl transition hover:shadow-[0_12px_50px_rgba(79,70,229,0.12)]">
-          {/* subtle top gradient line */}
           <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent" />
-          {/* glow behind avatar */}
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 blur-2xl opacity-60 transition group-hover:opacity-80" />
 
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -73,11 +126,17 @@ const Profile = () => {
                   ) : (
                     <span className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">Organizer • Event Hive</span>
                   )}
-                  <span className="hidden sm:inline-flex items-center gap-1 text-xs text-slate-400"><Zap size={12} className="text-amber-500" /> {bookings.length} bookings • {stats.totalEvents} events</span>
+                  <span className="hidden sm:inline-flex items-center gap-1 text-xs text-slate-400"><Zap size={12} className="text-amber-500" /> {bookings.length} bookings • {wishlistedEvents.length} wishlisted</span>
                 </div>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
+              <button onClick={() => setTab("wishlist")} className="group/btn relative overflow-hidden rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-rose-200 hover:bg-rose-50">
+                <span className="relative flex items-center gap-1.5">
+                  <Heart size={14} className="fill-rose-500 text-rose-500" /> Wishlist
+                  <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-xs font-bold text-white">{wishlistedEvents.length}</span>
+                </span>
+              </button>
               <button onClick={() => navigate("/my-bookings")} className="group/btn relative overflow-hidden rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50">
                 <span className="relative flex items-center gap-1.5">My Bookings <span className="rounded-full bg-indigo-600 px-1.5 py-0.5 text-xs font-bold text-white">{bookings.length}</span></span>
               </button>
@@ -88,32 +147,52 @@ const Profile = () => {
           </div>
 
           {/* Tabs — pill with indicator */}
-          <div className="mt-7 flex gap-2 border-t border-slate-100 pt-5">
+          <div className="mt-7 flex flex-wrap gap-2 border-t border-slate-100 pt-5">
             {[
-              { id: "profile", label: "Profile" },
-              { id: "bookings", label: "Bookings" },
+              { id: "profile", label: "Profile", icon: UserRound },
+              { id: "wishlist", label: "Wishlist", icon: Heart, count: wishlistedEvents.length },
+              { id: "bookings", label: "Bookings", icon: Ticket, count: bookings.length },
               { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
             ].map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`relative flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold transition-all ${tab === t.id ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-[1.02]" : "bg-slate-100 text-slate-600 hover:bg-white hover:shadow-sm hover:text-slate-900 border border-transparent hover:border-slate-200"}`}
+                className={`relative flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold transition-all ${
+                  tab === t.id
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-[1.02]"
+                    : "bg-slate-100 text-slate-600 hover:bg-white hover:shadow-sm hover:text-slate-900 border border-transparent hover:border-slate-200"
+                }`}
               >
-                {t.icon && <t.icon size={14} />} {t.label}
+                {t.icon && <t.icon size={14} className={t.id === "wishlist" && tab !== t.id ? "text-rose-500" : ""} />}
+                <span>{t.label}</span>
+                {t.count !== undefined && (
+                  <span
+                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+                      tab === t.id
+                        ? "bg-white/20 text-white"
+                        : t.id === "wishlist"
+                        ? "bg-rose-100 text-rose-700"
+                        : "bg-slate-200 text-slate-700"
+                    }`}
+                  >
+                    {t.count}
+                  </span>
+                )}
                 {tab === t.id && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
               </button>
             ))}
           </div>
         </div>
 
+        {/* 1. Profile Tab */}
         {tab === "profile" && (
           <>
-            {/* Stats — with top accent + hover lift */}
+            {/* Stats */}
             <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {[
                 { label: "Total Events", value: stats.totalEvents, sub: "Active", grad: "from-indigo-500 to-violet-500", bg: "bg-indigo-50", icon: CalendarDays },
                 { label: "My Bookings", value: stats.totalBookings, sub: "+3 this week", grad: "from-emerald-500 to-teal-500", bg: "bg-emerald-50", icon: Ticket },
-                { label: "Attendees", value: stats.totalAttendees.toLocaleString("en-IN"), sub: "Total reach", grad: "from-amber-500 to-orange-500", bg: "bg-amber-50", icon: Users },
+                { label: "Wishlisted", value: wishlistedEvents.length, sub: "Saved events", grad: "from-rose-500 to-pink-500", bg: "bg-rose-50", icon: Heart },
                 { label: "Revenue", value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`, sub: "Lifetime", grad: "from-violet-500 to-purple-500", bg: "bg-violet-50", icon: IndianRupee },
               ].map((s) => (
                 <div key={s.label} className="group relative overflow-hidden rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] hover:border-slate-300">
@@ -129,7 +208,7 @@ const Profile = () => {
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-5">
-              {/* Personal Info — glass */}
+              {/* Personal Info */}
               <div className="group relative overflow-hidden rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)] lg:col-span-3">
                 <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-50 to-violet-50 blur-xl opacity-60" />
                 <div className="relative flex items-center justify-between">
@@ -171,7 +250,7 @@ const Profile = () => {
               </div>
 
               <div className="space-y-4 lg:col-span-2">
-                {/* Your Dashboard — premium card */}
+                {/* Your Dashboard */}
                 <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-[1px] shadow-[0_12px_32px_rgba(15,23,42,0.2)]">
                   <div className="rounded-[23px] bg-gradient-to-br from-slate-900 to-indigo-950 p-6 text-white relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
@@ -205,6 +284,141 @@ const Profile = () => {
           </>
         )}
 
+        {/* 2. Wishlist Tab */}
+        {tab === "wishlist" && (
+          <div className="mt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-900">
+                  <Heart size={20} className="fill-rose-500 text-rose-500" />
+                  <span>Wishlisted Events ({wishlistedEvents.length})</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Saved events you plan to attend or book passes for
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate("/wishlist")}
+                  className="hidden sm:inline-flex rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Full Wishlist Page →
+                </button>
+                <button
+                  onClick={() => navigate("/events")}
+                  className="rounded-full bg-slate-900 px-4 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-black transition"
+                >
+                  Explore Events
+                </button>
+              </div>
+            </div>
+
+            {wishlistedEvents.length === 0 ? (
+              <div className="mt-6 rounded-[24px] border-2 border-dashed border-slate-200 bg-white p-12 text-center shadow-xs">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
+                  <Heart size={24} />
+                </div>
+                <h3 className="mt-3 text-base font-extrabold text-slate-900">No wishlisted events</h3>
+                <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+                  Browse our upcoming concerts, standup comedy, and conferences and click the heart icon to save them here!
+                </p>
+                <button
+                  onClick={() => navigate("/events")}
+                  className="mt-5 rounded-full bg-rose-500 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-rose-600 transition"
+                >
+                  Browse Live Events
+                </button>
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {wishlistedEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
+                  >
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <span className="absolute left-3 top-3 rounded-full bg-slate-900/90 px-2.5 py-0.5 text-[10px] font-bold text-white">
+                        {event.category || "Live Event"}
+                      </span>
+                      <button
+                        onClick={() => removeFromWishlist(event.id)}
+                        title="Remove from Wishlist"
+                        className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-rose-500 shadow-sm transition hover:scale-110"
+                      >
+                        <Heart size={15} className="fill-rose-500 text-rose-500" />
+                      </button>
+
+                      <div className="absolute bottom-2.5 left-3 flex items-center gap-2 text-[11px] text-white font-medium">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={12} className="text-primary" />
+                          <span>{event.formattedDate || event.date}</span>
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <MapPin size={12} className="text-primary" />
+                          <span>{event.city || event.location}</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-primary transition line-clamp-1">
+                          {event.title}
+                        </h4>
+                        <span className="flex items-center gap-0.5 text-xs font-bold text-slate-700 shrink-0">
+                          <Star size={11} className="fill-amber-400 text-amber-400" />
+                          {event.rating || 4.8}
+                        </span>
+                      </div>
+
+                      <p className="mt-1.5 text-xs text-slate-500 line-clamp-2">
+                        {event.description}
+                      </p>
+
+                      <div className="mt-auto pt-3.5 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] text-slate-400">Pass</span>
+                          <p className="text-sm font-extrabold text-slate-900">
+                            ₹{event.price?.toLocaleString("en-IN") || "999"}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => removeFromWishlist(event.id)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition"
+                            title="Remove"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedEventForBooking(event)}
+                            className="flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-primary-dark transition"
+                          >
+                            <Ticket size={12} />
+                            <span>Book Now</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. Bookings Tab */}
         {tab === "bookings" && (
           <div className="mt-6">
             <div className="flex items-center justify-between">
@@ -242,6 +456,7 @@ const Profile = () => {
           </div>
         )}
 
+        {/* 4. Dashboard Tab */}
         {tab === "dashboard" && (
           <>
             <div className="mt-6 flex items-center justify-between">
@@ -262,7 +477,17 @@ const Profile = () => {
           </>
         )}
       </div>
+
+      {/* Booking Modal */}
+      {selectedEventForBooking && (
+        <BookingModal
+          event={selectedEventForBooking}
+          isOpen={!!selectedEventForBooking}
+          onClose={() => setSelectedEventForBooking(null)}
+        />
+      )}
     </div>
   );
 };
+
 export default Profile;
