@@ -1,7 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import { initialEvents, weeklyBookings as defaultWeekly } from "../data/mockData";
+import { ALL_EVENTS } from "../member1/data/eventsData";
 import ToastContainer from "../member1/components/ToastContainer";
+
+const defaultWeekly = [
+  { day: "Mon", value: 38 },
+  { day: "Tue", value: 46 },
+  { day: "Wed", value: 40 },
+  { day: "Thu", value: 54 },
+  { day: "Fri", value: 48 },
+  { day: "Sat", value: 66 },
+  { day: "Sun", value: 59 },
+];
 
 const EventContext = createContext(null);
 
@@ -13,7 +23,12 @@ export const useAppStore = () => {
 
 export const AppProvider = ({ children }) => {
   const [events, setEvents] = useState(() => {
-    try { const s = localStorage.getItem("eh_events"); return s ? JSON.parse(s) : initialEvents; } catch { return initialEvents; }
+    try {
+      const s = localStorage.getItem("eh_events");
+      return s ? JSON.parse(s) : ALL_EVENTS.slice(0, 6);
+    } catch {
+      return ALL_EVENTS.slice(0, 6);
+    }
   });
   const isMockBooking = (b) => {
     if (!b) return true;
