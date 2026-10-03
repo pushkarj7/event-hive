@@ -1,10 +1,6 @@
 import { useState, useMemo } from "react";
 import { useAppStore } from "../../store/EventContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import StatCard from "../../member1/components/StatCard";
-import BookingsOverview from "../../member1/components/BookingsOverview";
-import UpcomingEvents from "../../member1/components/UpcomingEvents";
-import LatestBookings from "../../member1/components/LatestBookings";
 import BookingModal from "../../member1/components/BookingModal";
 import { ALL_EVENTS } from "../../member1/data/eventsData";
 import {
@@ -147,40 +143,49 @@ const Profile = () => {
           </div>
 
           {/* Tabs — pill with indicator */}
-          <div className="mt-7 flex flex-wrap gap-2 border-t border-slate-100 pt-5">
-            {[
-              { id: "profile", label: "Profile", icon: UserRound },
-              { id: "wishlist", label: "Wishlist", icon: Heart, count: wishlistedEvents.length },
-              { id: "bookings", label: "Bookings", icon: Ticket, count: bookings.length },
-              { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`relative flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold transition-all ${
-                  tab === t.id
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-[1.02]"
-                    : "bg-slate-100 text-slate-600 hover:bg-white hover:shadow-sm hover:text-slate-900 border border-transparent hover:border-slate-200"
-                }`}
-              >
-                {t.icon && <t.icon size={14} className={t.id === "wishlist" && tab !== t.id ? "text-rose-500" : ""} />}
-                <span>{t.label}</span>
-                {t.count !== undefined && (
-                  <span
-                    className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
-                      tab === t.id
-                        ? "bg-white/20 text-white"
-                        : t.id === "wishlist"
-                        ? "bg-rose-100 text-rose-700"
-                        : "bg-slate-200 text-slate-700"
-                    }`}
-                  >
-                    {t.count}
-                  </span>
-                )}
-                {tab === t.id && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
-              </button>
-            ))}
+          <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: "profile", label: "Profile", icon: UserRound },
+                { id: "wishlist", label: "Wishlist", icon: Heart, count: wishlistedEvents.length },
+                { id: "bookings", label: "Bookings", icon: Ticket, count: bookings.length },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`relative flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold transition-all ${
+                    tab === t.id
+                      ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-[1.02]"
+                      : "bg-slate-100 text-slate-600 hover:bg-white hover:shadow-sm hover:text-slate-900 border border-transparent hover:border-slate-200"
+                  }`}
+                >
+                  {t.icon && <t.icon size={14} className={t.id === "wishlist" && tab !== t.id ? "text-rose-500" : ""} />}
+                  <span>{t.label}</span>
+                  {t.count !== undefined && (
+                    <span
+                      className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+                        tab === t.id
+                          ? "bg-white/20 text-white"
+                          : t.id === "wishlist"
+                          ? "bg-rose-100 text-rose-700"
+                          : "bg-slate-200 text-slate-700"
+                      }`}
+                    >
+                      {t.count}
+                    </span>
+                  )}
+                  {tab === t.id && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-900 hover:text-white hover:border-slate-900 dark-preserve-white"
+            >
+              <LayoutDashboard size={13} />
+              <span>View Full Dashboard →</span>
+            </button>
           </div>
         </div>
 
@@ -258,13 +263,13 @@ const Profile = () => {
                     <div className="relative">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur border border-white/10"><LayoutDashboard size={18} /></div>
                       <h3 className="mt-3 text-lg font-extrabold tracking-tight">Your Dashboard</h3>
-                      <p className="mt-1 text-sm leading-5 text-indigo-100/80">Your analytics and overview — all in one place.</p>
-                      <div className="mt-5 flex flex-col gap-2.5">
-                        <button onClick={() => setTab("dashboard")} className="group flex items-center justify-center gap-2 rounded-full bg-white py-3 text-sm font-extrabold text-slate-900 shadow-lg transition hover:bg-slate-50">
-                          Open Dashboard here <ArrowUpRight size={14} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </button>
-                        <button onClick={() => navigate("/dashboard")} className="rounded-full border border-white/20 bg-white/10 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/15">
-                          Open full Dashboard page →
+                      <p className="mt-1 text-sm leading-5 text-indigo-100/80">Your analytics, bookings, and overview — all in one place.</p>
+                      <div className="mt-5">
+                        <button
+                          onClick={() => navigate("/dashboard")}
+                          className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-sm font-extrabold text-slate-900 shadow-lg transition hover:bg-slate-100 hover:scale-[1.01] active:scale-[0.99] dark-preserve-white"
+                        >
+                          View Full Dashboard <ArrowUpRight size={16} className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </button>
                       </div>
                     </div>
@@ -456,25 +461,21 @@ const Profile = () => {
           </div>
         )}
 
-        {/* 4. Dashboard Tab */}
+        {/* 4. Dashboard Tab Fallback */}
         {tab === "dashboard" && (
-          <>
-            <div className="mt-6 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-900"><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 text-white"><LayoutDashboard size={14} /></span> Dashboard — inside Profile</h2>
-              <button onClick={() => navigate("/dashboard")} className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">Open full page →</button>
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 mb-3">
+              <LayoutDashboard size={24} />
             </div>
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <StatCard icon={CalendarDays} title="Total Events" value={String(stats.totalEvents)} growth="↑ 2" growthText="this month" />
-              <StatCard icon={Ticket} title="Total Bookings" value={String(stats.totalBookings)} growth="↑ 18%" growthText="from last month" />
-              <StatCard icon={Users} title="Total Attendees" value={String(stats.totalAttendees).replace(/\B(?=(\d{3})+(?!\d))/g, "," )} growth="↑ 25%" growthText="from last month" />
-              <StatCard icon={IndianRupee} title="Total Revenue" value={`₹${String(stats.totalRevenue).replace(/\B(?=(\d{3})+(?!\d))/g, "," )}`} growth="↑ 28%" growthText="from last month" />
-            </div>
-            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <div className="lg:col-span-2"><BookingsOverview /></div>
-              <div><UpcomingEvents /></div>
-            </div>
-            <div className="mt-6"><LatestBookings /></div>
-          </>
+            <h3 className="text-base font-extrabold text-slate-900">Your Full Dashboard is Ready</h3>
+            <p className="mt-1 text-sm text-slate-500">Access comprehensive metrics, recent bookings, event management, and attendee lists.</p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-black transition"
+            >
+              View Full Dashboard →
+            </button>
+          </div>
         )}
       </div>
 

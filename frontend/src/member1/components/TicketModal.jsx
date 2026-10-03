@@ -86,7 +86,7 @@ export default function TicketModal({ booking, isOpen, onClose }) {
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-5 rounded-2xl bg-indigo-50/60 border border-indigo-100 p-4">
             {/* SVG QR Code */}
             <div className="flex items-center gap-3">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-white p-2 shadow-xs border border-slate-200">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-white p-2 shadow-xs border border-slate-200 dark-preserve-white">
                 <svg viewBox="0 0 100 100" className="h-full w-full">
                   <rect x="5" y="5" width="25" height="25" fill="#0F172A" />
                   <rect x="10" y="10" width="15" height="15" fill="#FFFFFF" />

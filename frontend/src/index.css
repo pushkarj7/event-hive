@@ -40,47 +40,182 @@ body {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Dark Mode Theme Definition & Overrides */
+/* ========================================================
+   Modern, Rich Dark Mode Theme System
+   ======================================================== */
 html.dark {
-    --color-background: #0A0E1A;
-    --color-surface: #111827;
+    --color-background: #0B0F19;
+    --color-surface: #121927;
     --color-text: #F8FAFC;
     --color-text-secondary: #94A3B8;
-    --color-border: #1E293B;
+    --color-border: #1E2B45;
+    --color-primary: #6366F1;
+    --color-primary-dark: #4F46E5;
+    --color-accent: #8B5CF6;
     color-scheme: dark;
 }
 
 html.dark body {
-    background-color: #0A0E1A;
+    background-color: #0B0F19;
     color: #F8FAFC;
 }
 
+/* Core surfaces & containers */
 html.dark .bg-surface {
-    background-color: #111827 !important;
+    background-color: #121927 !important;
 }
 
 html.dark .bg-background {
-    background-color: #0A0E1A !important;
+    background-color: #0B0F19 !important;
 }
 
-html.dark .bg-white {
-    background-color: #111827 !important;
+html.dark .bg-white:not(.dark-preserve-white) {
+    background-color: #121927 !important;
 }
 
 html.dark .bg-\[\#F8FAFC\] {
-    background-color: #0A0E1A !important;
+    background-color: #0B0F19 !important;
 }
 
+/* Borders with clear subtle contrast */
+html.dark .border-slate-100,
 html.dark .border-slate-200,
-html.dark .border-slate-100 {
-    border-color: #1E293B !important;
+html.dark .border-slate-300,
+html.dark .border-border {
+    border-color: #1E2B45 !important;
 }
 
+/* Secondary & inner surfaces */
 html.dark .bg-slate-50,
 html.dark .bg-slate-100 {
-    background-color: #1E293B !important;
+    background-color: #172134 !important;
 }
 
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover {
+    background-color: #1E2A42 !important;
+}
+
+html.dark .bg-slate-200\/60 {
+    background-color: #182337 !important;
+}
+
+/* High-contrast Action Buttons (prevents buttons from disappearing in dark cards) */
+html.dark .bg-slate-900:not(.dark-preserve-dark) {
+    background-color: #222E46 !important;
+    border: 1px solid #36486D !important;
+    color: #F8FAFC !important;
+}
+
+html.dark .hover\:bg-black:hover,
+html.dark .hover\:bg-slate-800:hover {
+    background-color: #2D3D5D !important;
+}
+
+/* Form Inputs, Textareas, Selects & Options */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark textarea,
+html.dark select {
+    background-color: #151F33 !important;
+    color: #F8FAFC !important;
+    border-color: #253554 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #64748B !important;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+    border-color: #6366F1 !important;
+    outline: none !important;
+}
+
+html.dark select option {
+    background-color: #121927 !important;
+    color: #F8FAFC !important;
+}
+
+/* ========================================================
+   Glowing, Harmonic Badges & Status Chips (Vibrant & Legible)
+   ======================================================== */
+/* Indigo / Purple */
+html.dark .bg-indigo-50,
+html.dark .bg-indigo-100 {
+    background-color: rgba(99, 102, 241, 0.18) !important;
+    border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+html.dark .text-indigo-600,
+html.dark .text-indigo-700,
+html.dark .text-indigo-800,
+html.dark .text-indigo-900 {
+    color: #A5B4FC !important;
+}
+
+/* Emerald / Green (Confirmed, Active, Verified) */
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-100 {
+    background-color: rgba(16, 185, 129, 0.18) !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html.dark .text-emerald-600,
+html.dark .text-emerald-700,
+html.dark .text-emerald-800,
+html.dark .text-emerald-900 {
+    color: #6EE7B7 !important;
+}
+
+/* Rose / Red (Cancelled, Expired, Alerts) */
+html.dark .bg-rose-50,
+html.dark .bg-rose-100,
+html.dark .bg-red-50,
+html.dark .bg-red-100 {
+    background-color: rgba(244, 63, 94, 0.18) !important;
+    border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+html.dark .text-rose-600,
+html.dark .text-rose-700,
+html.dark .text-rose-800,
+html.dark .text-red-600,
+html.dark .text-red-700 {
+    color: #FDA4AF !important;
+}
+
+/* Amber / Yellow (Pending, Badges, Highlights) */
+html.dark .bg-amber-50,
+html.dark .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.18) !important;
+    border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+html.dark .text-amber-600,
+html.dark .text-amber-700,
+html.dark .text-amber-800,
+html.dark .text-amber-900 {
+    color: #FDE047 !important;
+}
+
+/* Violet / Lavender */
+html.dark .bg-violet-50,
+html.dark .bg-violet-100,
+html.dark .bg-purple-50 {
+    background-color: rgba(139, 92, 246, 0.18) !important;
+    border-color: rgba(139, 92, 246, 0.35) !important;
+}
+
+html.dark .text-violet-600,
+html.dark .text-violet-700,
+html.dark .text-violet-800,
+html.dark .text-purple-600 {
+    color: #DDD6FE !important;
+}
+
+/* Text Hierarchy */
 html.dark .text-slate-900 {
     color: #F8FAFC !important;
 }
@@ -94,9 +229,42 @@ html.dark .text-slate-700 {
 }
 
 html.dark .text-slate-600,
-html.dark .text-slate-500,
-html.dark .text-slate-400 {
+html.dark .text-slate-500 {
     color: #94A3B8 !important;
+}
+
+html.dark .text-slate-400 {
+    color: #64748B !important;
+}
+
+/* Preserved white elements like scanned QR code cards */
+html.dark .dark-preserve-white {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+}
+
+html.dark .dark-preserve-white * {
+    color: #0F172A;
+}
+
+/* Sidebar Promo card in Dark Mode */
+html.dark aside .bg-indigo-100 {
+    background: linear-gradient(135deg, #151F33 0%, #1E1B4B 100%) !important;
+    border: 1px solid #312E81 !important;
+}
+
+html.dark aside .bg-indigo-100 h2 {
+    color: #FFFFFF !important;
+}
+
+html.dark aside .bg-indigo-100 p {
+    color: #A5B4FC !important;
+}
+
+/* Elevated depth for floating popups and menus */
+html.dark .shadow-xl,
+html.dark .shadow-2xl {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Print Styles for E-Ticket */

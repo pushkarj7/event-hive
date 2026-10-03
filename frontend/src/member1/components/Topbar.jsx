@@ -1,11 +1,11 @@
-import { Search, Bell, ChevronDown } from "lucide-react";
+import { Search, Bell, ChevronDown, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import { useState } from "react";
 
 const Topbar = () => {
   const navigate = useNavigate();
-  const { searchQuery, setSearchQuery, notifications, user } = useAppStore();
+  const { searchQuery, setSearchQuery, notifications, user, theme, toggleTheme } = useAppStore();
   const [open, setOpen] = useState(false);
 
   return (
@@ -20,9 +20,24 @@ const Topbar = () => {
           className="h-11 w-full rounded-full border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-100"
         />
       </div>
-      <div className="ml-8 flex items-center gap-6">
+      <div className="ml-8 flex items-center gap-4 sm:gap-6">
+        {/* Theme Toggle in Dashboard */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Toggle Theme"
+          title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-xs transition hover:bg-slate-100 hover:text-indigo-600"
+        >
+          {theme === "dark" ? (
+            <Sun size={17} className="text-amber-400" />
+          ) : (
+            <Moon size={17} className="text-slate-600" />
+          )}
+        </button>
+
         <button onClick={() => navigate("/dashboard")} className="relative text-slate-600 transition hover:text-indigo-600">
-          <Bell size={24} />
+          <Bell size={22} />
           <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">{notifications}</span>
         </button>
         <div className="relative">
