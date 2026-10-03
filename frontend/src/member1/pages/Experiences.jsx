@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Sparkles,
   Star,
@@ -12,176 +12,170 @@ import {
   ShieldCheck,
   Award,
 } from "lucide-react";
+import { ALL_EVENTS } from "../data/eventsData";
+import { useAppStore } from "../../store/EventContext";
 import BookingModal from "../components/BookingModal";
 
-const EXPERIENCES_DATA = [
-  {
-    id: 101,
-    title: "Candlelight Concert: Tribute to Hans Zimmer & A.R. Rahman",
-    category: "Candlelight",
-    city: "Mumbai",
-    location: "The Royal Opera House, Mumbai",
-    date: "14 Nov 2026",
-    time: "7:30 PM (90 mins)",
-    duration: "1.5 Hours",
-    price: 1299,
-    rating: 4.9,
-    reviewsCount: "1.8K reviews",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    badge: "Bestseller",
-    includes: "Illuminated by 3,000+ flickering candles, string quartet",
-    description: "An awe-inspiring classical tribute performed under the gentle glow of thousands of candles in Mumbai's historic heritage theatre.",
-  },
-  {
-    id: 102,
-    title: "Secret Rooftop Standup & Craft Beer Evening",
-    category: "Rooftops",
-    city: "Delhi",
-    location: "Skyline Terrace, Hauz Khas, Delhi",
-    date: "21 Nov 2026",
-    time: "8:00 PM (120 mins)",
-    duration: "2 Hours",
-    price: 899,
-    rating: 4.8,
-    reviewsCount: "940 reviews",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80",
-    badge: "Trending",
-    includes: "1 Complimentary craft beer + surprise headline comic",
-    description: "Unfiltered comedy under the starlit Delhi skyline with panoramic heritage views and curated artisanal craft brews.",
-  },
-  {
-    id: 103,
-    title: "Vineyard Sunset Wine Tasting & Acoustic Jazz",
-    category: "Culinary",
-    city: "Jaipur",
-    location: "Chateau Rajputana Vineyards, Jaipur",
-    date: "05 Dec 2026",
-    time: "4:00 PM – 9:00 PM",
-    duration: "5 Hours",
-    price: 1599,
-    rating: 4.9,
-    reviewsCount: "620 reviews",
-    image: "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=800&q=80",
-    badge: "Exclusive",
-    includes: "Sommelier-guided 5-wine tasting, artisanal cheese platter",
-    description: "Stroll through sun-drenched vineyards, taste vintage blends with master sommeliers, and relax to live acoustic jazz as the sun sets.",
-  },
-  {
-    id: 104,
-    title: "Backstage VIP Pass: Artist Soundcheck & Meet-and-Greet",
-    category: "VIP Access",
-    city: "Bengaluru",
-    location: "Palace Grounds, Bengaluru",
-    date: "12 Dec 2026",
-    time: "3:30 PM onwards",
-    duration: "Full Access",
-    price: 3499,
-    rating: 4.9,
-    reviewsCount: "430 reviews",
-    image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
-    badge: "Ultra Rare",
-    includes: "Signed merchandise, soundcheck entry, private lounge & bar",
-    description: "Go behind the curtain! Watch headline artists rehearse before stadium gates open, enjoy private catering, and take home signed memorabilia.",
-  },
-  {
-    id: 105,
-    title: "Stargazing & Electronic Sunset Campout",
-    category: "Camping",
-    city: "Goa",
-    location: "Arambol Cliffside Sanctuary, Goa",
-    date: "28 Dec 2026",
-    time: "Overnight Experience",
-    duration: "Overnight",
-    price: 2199,
-    rating: 4.8,
-    reviewsCount: "1.1K reviews",
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80",
-    badge: "Scenic",
-    includes: "Luxury bohemian tents, bonfire barbecue, ambient DJ set",
-    description: "Cliffside camping by the Arabian Sea with high-powered astronomical telescopes, seaside acoustic jam sessions, and morning sunrise yoga.",
-  },
-];
+// Helper function to provide rich curated perks for live events
+const getInclusions = (category, title) => {
+  const t = (title || "").toLowerCase();
+  if (t.includes("symphony") || t.includes("arijit")) {
+    return "40-Piece Live Orchestra + Reserved Seating & Souvenir Pass";
+  }
+  if (t.includes("comedy") || t.includes("zakir") || t.includes("harsh")) {
+    return "Front Tier Reserved Seating + Fast-Track Entry & Meetup";
+  }
+  if (t.includes("edm") || t.includes("sunburn") || t.includes("rave")) {
+    return "VIP Fanpit Access + Immersive Laser Stage Visuals";
+  }
+  if (category === "Tech") {
+    return "Full Keynote Access + Exclusive Networking Lounge Pass";
+  }
+  if (category === "Food") {
+    return "Artisanal Tasting Coupons + Sommelier Masterclass Entry";
+  }
+  if (category === "Sports") {
+    return "Stadium Match Entry + Official Fan Kit & Reserved Stand";
+  }
+  return "Priority Fast-Track Entry + Verified Digital Pass";
+};
 
+// Initial verified reviews specifically based on our actual live platform events
 const INITIAL_REVIEWS = [
   {
     id: 1,
-    name: "Rohan Sharma",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    name: "Aakash Mehta",
+    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
     city: "Mumbai",
     rating: 5,
     date: "2 days ago",
-    experience: "Candlelight Concert: Tribute to Hans Zimmer",
+    experience: "Arijit Singh Symphony Live",
     comment:
-      "Genuinely one of the most magical evenings of my life. Booking on Event Hive took 30 seconds, and the QR scan at the Royal Opera House gate took barely 2 seconds. The 3,000 candles and the cello solo gave me literal goosebumps. Will book again!",
-    helpfulCount: 42,
+      "Arijit's 40-piece symphony at DY Patil Stadium was truly goosebumps material. Entry with Event Hive QR code took less than 10 seconds. Sound engineering was world class!",
+    helpfulCount: 54,
   },
   {
     id: 2,
-    name: "Ananya Deshmukh",
+    name: "Tanvi Kapoor",
     avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80",
     city: "Delhi",
     rating: 5,
-    date: "1 week ago",
-    experience: "Secret Rooftop Standup & Craft Beer",
+    date: "5 days ago",
+    experience: "EDM Night 2026",
     comment:
-      "The lineup was incredible and kept top secret until the comics walked on stage! The craft beer was crisp, crowd was super warm, and the view over Hauz Khas monument was breathtaking. 10/10 recommendation for date nights.",
-    helpfulCount: 29,
+      "The bass and laser visuals by DJ Nova and Alex were absolutely insane! Crowd management was smooth and the passes via Event Hive were so seamless to scan.",
+    helpfulCount: 42,
   },
   {
     id: 3,
-    name: "Vikramaditya Roy",
+    name: "Siddharth Rao",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
-    city: "Bengaluru",
+    city: "Noida",
     rating: 5,
-    date: "2 weeks ago",
-    experience: "Backstage VIP Pass: Artist Soundcheck",
+    date: "1 week ago",
+    experience: "Tech Summit 2026",
     comment:
-      "Worth every single rupee. We got into the arena 3 hours before the public, stood right by the mixing console during soundcheck, and took photos with the band. The private VIP lounge had fantastic finger food and zero queue restrooms.",
-    helpfulCount: 38,
+      "The AI and Web3 keynote sessions at India Expo Centre were packed with actionable insights. Great networking lounge and food arrangements. Definitely attending next year.",
+    helpfulCount: 37,
   },
   {
     id: 4,
     name: "Pooja Malhotra",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+    city: "Delhi",
+    rating: 5,
+    date: "2 weeks ago",
+    experience: "Standup Comedy Special with Zakir",
+    comment:
+      "Zakir Khan had us in tears from laughing right from the start! Sirifort Auditorium was packed but Event Hive digital passes made gate entry completely hassle-free.",
+    helpfulCount: 68,
+  },
+  {
+    id: 5,
+    name: "Kabir Sengupta",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
+    city: "Goa",
+    rating: 5,
+    date: "3 weeks ago",
+    experience: "Sunburn Beach Electronic Carnival",
+    comment:
+      "Vagator beach vibes, Arabian sea breeze, and headliner beats under the stars! Easily the best weekend festival experience in India.",
+    helpfulCount: 49,
+  },
+  {
+    id: 6,
+    name: "Ananya Deshmukh",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
     city: "Jaipur",
     rating: 4.8,
-    date: "3 weeks ago",
-    experience: "Vineyard Sunset Wine Tasting & Acoustic Jazz",
+    date: "1 month ago",
+    experience: "Food & Wine Festival",
     comment:
-      "The sommelier explained the wine-making process with such passion! The pairings with artisanal smoked cheeses while the jazz band played in the sunset background was idyllic. Kudos to Event Hive for curating this.",
-    helpfulCount: 19,
+      "Artisanal food stalls and masterclasses by top chefs were brilliant. The live acoustic sets in Riverside Park created the most charming atmosphere.",
+    helpfulCount: 23,
   },
 ];
 
 export default function Experiences() {
+  const { events: customEvents } = useAppStore();
   const [activeCategory, setActiveCategory] = useState("All");
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [selectedExpForBooking, setSelectedExpForBooking] = useState(null);
   const [helpfulLiked, setHelpfulLiked] = useState({});
 
-  // Review Form state wrapped in form tag
+  // Combine real platform ALL_EVENTS with any organizer-created events from EventContext
+  const liveEvents = useMemo(() => {
+    const combined = [...ALL_EVENTS];
+    if (Array.isArray(customEvents)) {
+      customEvents.forEach((ce) => {
+        // If it's a newly created event not already in ALL_EVENTS, add it
+        const exists = combined.some(
+          (e) => String(e.id) === String(ce.id) || e.title.toLowerCase() === ce.title?.toLowerCase()
+        );
+        if (!exists && ce.title) {
+          combined.push({
+            id: ce.id || Date.now(),
+            title: ce.title,
+            category: ce.category || "General",
+            badge: "Featured",
+            date: ce.date || "2026-12-01",
+            formattedDate: ce.formattedDate || ce.date || "Upcoming",
+            time: ce.time || "6:00 PM – 9:00 PM",
+            venue: ce.location || "Main Arena",
+            city: ce.location?.split(",")?.[1]?.trim() || "India",
+            location: ce.location || "Venue, India",
+            price: Number(ce.price) || 999,
+            rating: ce.rating || 4.8,
+            reviews: "1.2k",
+            image: ce.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80",
+            description: ce.description || "Exciting live event on Event Hive.",
+          });
+        }
+      });
+    }
+    return combined;
+  }, [customEvents]);
+
+  // Review Form state defaulted to one of our actual live events
   const [reviewFormData, setReviewFormData] = useState({
     name: "",
     city: "Mumbai",
-    experience: "Candlelight Concert: Tribute to Hans Zimmer & A.R. Rahman",
+    experience: ALL_EVENTS[0]?.title || "EDM Night 2026",
     rating: 5,
     comment: "",
   });
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-  const categories = [
-    "All",
-    "Candlelight",
-    "Rooftops",
-    "Culinary",
-    "VIP Access",
-    "Camping",
-  ];
+  // Extract unique categories directly from live events
+  const categories = useMemo(() => {
+    const set = new Set(liveEvents.map((e) => e.category).filter(Boolean));
+    return ["All", ...Array.from(set)];
+  }, [liveEvents]);
 
-  const filteredExperiences =
-    activeCategory === "All"
-      ? EXPERIENCES_DATA
-      : EXPERIENCES_DATA.filter((exp) => exp.category === activeCategory);
+  const filteredExperiences = useMemo(() => {
+    if (activeCategory === "All") return liveEvents;
+    return liveEvents.filter((exp) => exp.category === activeCategory);
+  }, [liveEvents, activeCategory]);
 
   const handleHelpfulClick = (reviewId) => {
     setHelpfulLiked((prev) => ({ ...prev, [reviewId]: !prev[reviewId] }));
@@ -208,7 +202,7 @@ export default function Experiences() {
     setReviewFormData({
       name: "",
       city: "Mumbai",
-      experience: "Candlelight Concert: Tribute to Hans Zimmer & A.R. Rahman",
+      experience: liveEvents[0]?.title || "EDM Night 2026",
       rating: 5,
       comment: "",
     });
@@ -226,13 +220,13 @@ export default function Experiences() {
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1 text-xs font-semibold text-primary backdrop-blur-md">
               <Sparkles size={14} />
-              <span>Unforgettable Curated Evenings</span>
+              <span>Verified Live Events</span>
             </span>
             <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
-              Curated Experiences &amp; Fan Reviews
+              Curated Live Experiences &amp; Fan Reviews
             </h1>
             <p className="mt-3 text-sm text-slate-300 sm:text-base leading-relaxed">
-              Step beyond ordinary concerts. Explore intimate candlelight symphonies, rooftop standup comedies, private vineyard tastings, and VIP backstage access with verified attendee reviews.
+              Explore authentic live concerts, tech conclaves, stadium finals, and comedy specials currently live on Event Hive. Book passes with instant confirmation and read real attendee reviews.
             </p>
           </div>
 
@@ -249,7 +243,7 @@ export default function Experiences() {
             </div>
             <div className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
               <Award size={15} className="text-primary" />
-              <span>Handpicked Organizers</span>
+              <span>Direct Organizer Access</span>
             </div>
           </div>
         </div>
@@ -260,10 +254,10 @@ export default function Experiences() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
           <div>
             <h2 className="text-xl font-bold text-text sm:text-2xl">
-              Featured Curated Experiences
+              Live Experiences ({filteredExperiences.length})
             </h2>
             <p className="text-xs text-text-secondary mt-0.5">
-              Limited-capacity immersive experiences with fast-track entry
+              Real events currently open for booking across top cities
             </p>
           </div>
 
@@ -315,10 +309,10 @@ export default function Experiences() {
                 <div className="absolute bottom-2.5 left-3 flex items-center gap-2 text-xs text-white">
                   <span className="flex items-center gap-1">
                     <Clock size={12} className="text-primary" />
-                    <span className="text-[11px]">{exp.duration}</span>
+                    <span className="text-[11px]">{exp.time || exp.formattedDate || "Live Event"}</span>
                   </span>
                   <span>•</span>
-                  <span className="text-[11px] font-medium text-slate-200">{exp.city}</span>
+                  <span className="text-[11px] font-medium text-slate-200">{exp.city || "India"}</span>
                 </div>
               </div>
 
@@ -335,13 +329,13 @@ export default function Experiences() {
                 {/* Inclusions tag */}
                 <div className="mt-3 rounded-lg bg-primary/5 p-2 text-[11px] text-primary font-medium flex items-center gap-1.5">
                   <Sparkles size={13} className="shrink-0" />
-                  <span className="line-clamp-1">{exp.includes}</span>
+                  <span className="line-clamp-1">{getInclusions(exp.category, exp.title)}</span>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between text-xs text-text-secondary">
                   <span className="flex items-center gap-1 line-clamp-1">
                     <MapPin size={13} className="shrink-0 text-primary" />
-                    {exp.location}
+                    {exp.venue || exp.location}
                   </span>
                   <span className="flex items-center gap-1 font-semibold text-text shrink-0">
                     <Star size={13} className="fill-amber-400 text-amber-400" />
@@ -354,7 +348,7 @@ export default function Experiences() {
                   <div>
                     <span className="text-[10px] text-text-secondary">Pass starts at</span>
                     <p className="text-base font-bold text-text">
-                      ₹{exp.price.toLocaleString("en-IN")}
+                      ₹{exp.price?.toLocaleString("en-IN") || "999"}
                     </p>
                   </div>
 
@@ -365,15 +359,15 @@ export default function Experiences() {
                         id: exp.id,
                         title: exp.title,
                         category: exp.category,
-                        formattedDate: exp.date,
-                        date: exp.date,
+                        formattedDate: exp.formattedDate || exp.date,
+                        date: exp.date || exp.formattedDate,
                         time: exp.time,
-                        venue: exp.location,
+                        venue: exp.venue || exp.location,
                         city: exp.city,
-                        location: exp.location,
+                        location: exp.location || exp.venue,
                         price: exp.price,
                         rating: exp.rating,
-                        reviews: exp.reviewsCount,
+                        reviews: exp.reviews || "1.2k",
                         image: exp.image,
                       })
                     }
@@ -398,7 +392,7 @@ export default function Experiences() {
             <div className="rounded-2xl border border-slate-200 bg-surface p-6 shadow-xs">
               <h3 className="text-base font-bold text-text">Attendee Satisfaction</h3>
               <p className="text-xs text-text-secondary mt-1">
-                Verified reviews from guests who booked passes on Event Hive
+                Verified reviews from guests who attended our live events
               </p>
 
               <div className="mt-4 flex items-center gap-4">
@@ -443,7 +437,7 @@ export default function Experiences() {
               </div>
             </div>
 
-            {/* Interactive "Write a Review" Form wrapped in a form tag */}
+            {/* Interactive "Write a Review" Form */}
             <div className="rounded-2xl border border-slate-200 bg-surface p-6 shadow-xs">
               <div className="flex items-center gap-2">
                 <MessageSquare size={17} className="text-primary" />
@@ -492,9 +486,11 @@ export default function Experiences() {
                       <option value="Mumbai">Mumbai</option>
                       <option value="Delhi">Delhi</option>
                       <option value="Bengaluru">Bengaluru</option>
-                      <option value="Goa">Goa</option>
+                      <option value="Noida">Noida</option>
                       <option value="Jaipur">Jaipur</option>
                       <option value="Kolkata">Kolkata</option>
+                      <option value="Goa">Goa</option>
+                      <option value="Pune">Pune</option>
                     </select>
                   </div>
 
@@ -521,7 +517,7 @@ export default function Experiences() {
 
                 <div>
                   <label className="block text-xs font-semibold text-text">
-                    Event / Experience Attended *
+                    Live Event Attended *
                   </label>
                   <select
                     value={reviewFormData.experience}
@@ -533,21 +529,11 @@ export default function Experiences() {
                     }
                     className="mt-1 w-full rounded-lg border border-slate-200 bg-background px-2.5 py-2 text-xs text-text outline-none focus:border-primary"
                   >
-                    <option value="Candlelight Concert: Tribute to Hans Zimmer & A.R. Rahman">
-                      Candlelight Concert: Hans Zimmer & A.R. Rahman
-                    </option>
-                    <option value="Secret Rooftop Standup & Craft Beer Evening">
-                      Secret Rooftop Standup & Craft Beer
-                    </option>
-                    <option value="Vineyard Sunset Wine Tasting & Acoustic Jazz">
-                      Vineyard Sunset Wine Tasting & Jazz
-                    </option>
-                    <option value="Backstage VIP Pass: Artist Soundcheck">
-                      Backstage VIP Pass: Soundcheck & Meet
-                    </option>
-                    <option value="Stargazing & Electronic Sunset Campout">
-                      Stargazing & Electronic Sunset Campout
-                    </option>
+                    {liveEvents.map((ev) => (
+                      <option key={ev.id} value={ev.title}>
+                        {ev.title} ({ev.city || "India"})
+                      </option>
+                    ))}
                   </select>
                 </div>
 
