@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Menu, X, Search, ChevronDown, User, LayoutDashboard, Ticket, PlusCircle, LogOut, Heart } from "lucide-react";
+import { Menu, X, Search, ChevronDown, User, LayoutDashboard, Ticket, PlusCircle, LogOut, Heart, Sun, Moon } from "lucide-react";
 import EventHiveLogo from "./EventHiveLogo";
 import { useAppStore } from "../../store/EventContext";
 
@@ -14,7 +14,7 @@ const navigationLinks = [
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { searchQuery, setSearchQuery, isAuthenticated, user, wishlist, logout } = useAppStore();
+  const { searchQuery, setSearchQuery, isAuthenticated, user, wishlist, logout, theme, toggleTheme } = useAppStore();
   const navigate = useNavigate();
 
   const linkClasses = ({ isActive }) =>
@@ -87,8 +87,23 @@ function Navbar() {
           </button>
         </form>
 
-        {/* Authentication area */}
-        <div className="ml-auto hidden items-center gap-2 sm:flex">
+        {/* Theme & Authentication area */}
+        <div className="ml-auto hidden items-center gap-2.5 sm:flex">
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-xs transition hover:bg-slate-100 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          >
+            {theme === "dark" ? (
+              <Sun size={17} className="text-amber-400 rotate-0 transition-transform" />
+            ) : (
+              <Moon size={17} className="text-slate-600 rotate-0 transition-transform" />
+            )}
+          </button>
+
           {!isAuthenticated ? (
             <>
               <Link
@@ -188,20 +203,35 @@ function Navbar() {
           )}
         </div>
 
-        {/* Mobile Navigation Toggle Button */}
-        <button
-          type="button"
-          className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-lg text-text transition-colors hover:bg-primary/10 xl:hidden"
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={isMenuOpen}
-        >
-          {isMenuOpen ? (
-            <X className="h-5 w-5" aria-hidden="true" />
-          ) : (
-            <Menu className="h-5 w-5" aria-hidden="true" />
-          )}
-        </button>
+        {/* Mobile controls */}
+        <div className="ml-auto flex items-center gap-2 xl:hidden">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-xs transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800"
+          >
+            {theme === "dark" ? (
+              <Sun size={17} className="text-amber-400" />
+            ) : (
+              <Moon size={17} className="text-slate-600" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-text transition-colors hover:bg-primary/10"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMenuOpen}
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+        </div>
 
         {/* Mobile Dropdown Menu */}
         {isMenuOpen && (

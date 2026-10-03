@@ -1,8 +1,8 @@
-import { CalendarDays, MapPin, Ticket, XCircle, ArrowUpRight, Sparkles } from "lucide-react";
+import { CalendarDays, MapPin, Ticket, XCircle, ArrowUpRight, Sparkles, Printer } from "lucide-react";
 import { useAppStore } from "../../store/EventContext";
 import { useNavigate } from "react-router-dom";
 
-const BookingCard = ({ booking }) => {
+const BookingCard = ({ booking, onPrintTicket }) => {
   const { cancelBooking } = useAppStore();
   const navigate = useNavigate();
   const isCancelled = booking.status === "Cancelled";
@@ -30,11 +30,23 @@ const BookingCard = ({ booking }) => {
         </div>
         <span className={`h-fit shrink-0 rounded-full px-3 py-1 text-xs font-extrabold shadow-sm ${isConfirmed ? "bg-emerald-500 text-white" : isCancelled ? "bg-red-500 text-white" : "bg-amber-500 text-white"}`}>{booking.status}</span>
       </div>
-      <div className="flex items-center gap-2 border-t border-slate-100 bg-slate-50/50 px-5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/50 px-5 py-3">
         {!isCancelled ? (
           <>
-            <button onClick={handleCancel} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-sm hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"><XCircle size={12} /> Cancel</button>
-            <button onClick={() => navigate(`/event/${booking.eventId}`)} className="inline-flex items-center gap-1 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition">View event <ArrowUpRight size={12} /></button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleCancel} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-sm hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"><XCircle size={12} /> Cancel</button>
+              <button onClick={() => navigate(`/event/${booking.eventId}`)} className="inline-flex items-center gap-1 rounded-full bg-white border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition">View event <ArrowUpRight size={12} /></button>
+            </div>
+            {isConfirmed && onPrintTicket && (
+              <button
+                type="button"
+                onClick={() => onPrintTicket(booking)}
+                className="inline-flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-indigo-700 transition"
+              >
+                <Printer size={13} />
+                <span>Print Pass</span>
+              </button>
+            )}
           </>
         ) : (
           <span className="text-xs font-medium text-slate-400">This booking was cancelled</span>

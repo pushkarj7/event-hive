@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { X, Star, MapPin, Calendar, ShieldCheck, CheckCircle, Ticket, Lock, ArrowRight } from "lucide-react";
+import { X, Star, MapPin, Calendar, ShieldCheck, CheckCircle, Ticket, Lock, ArrowRight, Printer } from "lucide-react";
 import { useAppStore } from "../../store/EventContext";
 import { useNavigate } from "react-router-dom";
+import TicketModal from "./TicketModal";
 
 export default function BookingModal({ event, isOpen, onClose }) {
   const { isAuthenticated, user, addBooking } = useAppStore();
@@ -32,6 +33,8 @@ export default function BookingModal({ event, isOpen, onClose }) {
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingId, setBookingId] = useState("");
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [bookedData, setBookedData] = useState(null);
 
   if (!isOpen || !event) return null;
 
@@ -78,27 +81,30 @@ export default function BookingModal({ event, isOpen, onClose }) {
     const generatedId = "EH-" + Math.floor(100000 + Math.random() * 900000);
     setBookingId(generatedId);
 
+    const bookingPayload = {
+      id: generatedId,
+      eventId: event.id,
+      event: event.title,
+      title: event.title,
+      category: event.category,
+      location: event.location || event.venue,
+      venue: event.venue || event.location,
+      date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+      amount: totalAmount,
+      price: ticketPrices.general,
+      tickets: totalTickets,
+      user: formData.fullName || user?.name || "Attendee",
+      fullName: formData.fullName || user?.name || "Attendee",
+      email: formData.email || user?.email || "",
+      phone: formData.phone || user?.phone || "",
+      paymentMethod,
+      image: event.image,
+      status: "Confirmed",
+    };
+    setBookedData(bookingPayload);
+
     if (addBooking) {
-      addBooking({
-        id: generatedId,
-        eventId: event.id,
-        event: event.title,
-        title: event.title,
-        category: event.category,
-        location: event.location || event.venue,
-        venue: event.venue || event.location,
-        date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-        amount: totalAmount,
-        price: ticketPrices.general,
-        tickets: totalTickets,
-        user: formData.fullName || user?.name || "Attendee",
-        fullName: formData.fullName || user?.name || "Attendee",
-        email: formData.email || user?.email || "",
-        phone: formData.phone || user?.phone || "",
-        paymentMethod,
-        image: event.image,
-        status: "Confirmed",
-      });
+      addBooking(bookingPayload);
     }
 
     setIsSuccess(true);
@@ -213,6 +219,14 @@ export default function BookingModal({ event, isOpen, onClose }) {
             </div>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => setShowTicketModal(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-black transition-all"
+              >
+                <Printer size={15} />
+                <span>Print E-Ticket</span>
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -488,6 +502,14 @@ export default function BookingModal({ event, isOpen, onClose }) {
           </form>
         )}
       </div>
+
+      {showTicketModal && bookedData && (
+        <TicketModal
+          booking={bookedData}
+          isOpen={showTicketModal}
+          onClose={() => setShowTicketModal(false)}
+        />
+      )}
     </div>
   );
 }

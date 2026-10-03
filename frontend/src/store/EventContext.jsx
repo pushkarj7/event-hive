@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 import { initialEvents, initialBookings, weeklyBookings as defaultWeekly } from "../data/mockData";
+import ToastContainer from "../member1/components/ToastContainer";
 
 const EventContext = createContext(null);
 
@@ -25,6 +26,48 @@ export const AppProvider = ({ children }) => {
       return ["evt-1", "evt-5"];
     }
   });
+
+  // Toast notification state
+  const [toasts, setToasts] = useState([]);
+  const showToast = (message, type = "success") => {
+    const id = Date.now() + Math.random();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3200);
+  };
+  const removeToast = (id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  // Dark / Light Theme state
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("eh_theme");
+      if (saved) return saved;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    } catch {
+      return "light";
+    }
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("eh_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      showToast(next === "dark" ? "Dark Mode Enabled 🌙" : "Light Mode Enabled ☀️", "info");
+      return next;
+    });
+  };
+
   const [weekly] = useState(defaultWeekly);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -40,16 +83,19 @@ export const AppProvider = ({ children }) => {
     const u = { name: name.charAt(0).toUpperCase() + name.slice(1), role: "Event Organizer", initial: name.charAt(0).toUpperCase(), email: payload.email || "", phone: payload.phone || "" };
     setAuthUser(u);
     localStorage.setItem("eh_auth", JSON.stringify(u));
+    showToast(`Welcome back, ${u.name}! Logged in successfully ✓`, "success");
     return u;
   };
   const logout = () => {
     setAuthUser(null);
     localStorage.removeItem("eh_auth");
+    showToast("Logged out successfully", "info");
   };
   const updateProfile = (patch) => {
     const next = { ...authUser, ...patch, initial: (patch.name || authUser.name).charAt(0).toUpperCase() };
     setAuthUser(next);
     localStorage.setItem("eh_auth", JSON.stringify(next));
+    showToast("Profile updated successfully ✓", "success");
     return next;
   };
 
@@ -62,8 +108,10 @@ export const AppProvider = ({ children }) => {
       const idStr = String(eventId);
       const exists = prev.some((id) => String(id) === idStr);
       if (exists) {
+        showToast("Removed from Wishlist", "info");
         return prev.filter((id) => String(id) !== idStr);
       } else {
+        showToast("Added to your Wishlist! ❤️", "wishlist");
         return [...prev, eventId];
       }
     });
@@ -71,6 +119,7 @@ export const AppProvider = ({ children }) => {
 
   const removeFromWishlist = (eventId) => {
     setWishlist((prev) => prev.filter((id) => String(id) !== String(eventId)));
+    showToast("Removed from Wishlist", "info");
   };
 
   const isWishlisted = (eventId) => {
@@ -134,11 +183,13 @@ export const AppProvider = ({ children }) => {
       };
     }
     setBookings((p) => [nb, ...p]);
+    showToast("Ticket booked successfully! Confirmed in My Bookings 🎉", "success");
     return nb;
   };
 
   const cancelBooking = (id) => {
     setBookings((p) => p.map((b) => b.id === id ? { ...b, status: "Cancelled" } : b));
+    showToast("Booking cancelled successfully", "info");
   };
 
   const filteredEvents = searchQuery.trim() === "" ? events : events.filter((e) =>
@@ -160,8 +211,15 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <EventContext.Provider value={{ events, bookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted, weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking, updateProfile, user, authUser, isAuthenticated, login, logout, notifications, stats, filteredEvents, filteredBookings }}>
+    <EventContext.Provider value={{
+      events, bookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
+      theme, toggleTheme, toasts, showToast, removeToast,
+      weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking,
+      updateProfile, user, authUser, isAuthenticated, login, logout, notifications,
+      stats, filteredEvents, filteredBookings
+    }}>
       {children}
+      <ToastContainer />
     </EventContext.Provider>
   );
 };

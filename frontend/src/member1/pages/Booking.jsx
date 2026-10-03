@@ -8,10 +8,12 @@ import {
   CheckCircle,
   ArrowLeft,
   Lock,
+  Printer,
 } from "lucide-react";
 import { ALL_EVENTS } from "../data/eventsData";
 import { DETAILED_ARTISTS } from "../data/artistsData";
 import { useAppStore } from "../../store/EventContext";
+import TicketModal from "../components/TicketModal";
 
 export default function Booking() {
   const { id } = useParams();
@@ -82,6 +84,8 @@ export default function Booking() {
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingId, setBookingId] = useState("");
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [bookedData, setBookedData] = useState(null);
 
   if (!isAuthenticated) {
     return (
@@ -147,27 +151,29 @@ export default function Booking() {
     }
     const generatedId = "EH-" + Math.floor(100000 + Math.random() * 900000);
     setBookingId(generatedId);
+    const newBookingObj = {
+      id: generatedId,
+      eventId: event.id,
+      event: event.title,
+      title: event.title,
+      category: event.category,
+      location: event.location || event.venue,
+      venue: event.venue || event.location,
+      date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+      amount: totalAmount,
+      price: ticketPrices.general,
+      tickets: totalTickets,
+      user: formData.fullName || user?.name || "Attendee",
+      fullName: formData.fullName || user?.name || "Attendee",
+      email: formData.email || user?.email || "",
+      phone: formData.phone || user?.phone || "",
+      paymentMethod,
+      image: event.image,
+      status: "Confirmed",
+    };
+    setBookedData(newBookingObj);
     if (addBooking) {
-      addBooking({
-        id: generatedId,
-        eventId: event.id,
-        event: event.title,
-        title: event.title,
-        category: event.category,
-        location: event.location || event.venue,
-        venue: event.venue || event.location,
-        date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-        amount: totalAmount,
-        price: ticketPrices.general,
-        tickets: totalTickets,
-        user: formData.fullName || user?.name || "Attendee",
-        fullName: formData.fullName || user?.name || "Attendee",
-        email: formData.email || user?.email || "",
-        phone: formData.phone || user?.phone || "",
-        paymentMethod,
-        image: event.image,
-        status: "Confirmed",
-      });
+      addBooking(newBookingObj);
     }
     setIsSuccess(true);
   };
@@ -227,6 +233,13 @@ export default function Booking() {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowTicketModal(true)}
+                className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-black transition text-center"
+              >
+                <Printer size={14} /> Print / Save E-Ticket
+              </button>
               <Link
                 to="/my-bookings"
                 className="rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition text-center"
@@ -486,6 +499,14 @@ export default function Booking() {
           </form>
         )}
       </div>
+
+      {showTicketModal && bookedData && (
+        <TicketModal
+          booking={bookedData}
+          isOpen={showTicketModal}
+          onClose={() => setShowTicketModal(false)}
+        />
+      )}
     </div>
   );
 }

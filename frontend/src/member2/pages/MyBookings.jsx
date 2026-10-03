@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useAppStore } from "../../store/EventContext";
 import { useNavigate } from "react-router-dom";
 import BookingCard from "../../member1/components/BookingCard";
+import TicketModal from "../../member1/components/TicketModal";
 import { Ticket, Search, Sparkles, TrendingUp, CalendarDays, UserRound, LayoutDashboard, ArrowLeft } from "lucide-react";
 
 const MyBookings = () => {
   const { filteredBookings, searchQuery, setSearchQuery, stats } = useAppStore();
   const navigate = useNavigate();
+  const [selectedTicketForPrint, setSelectedTicketForPrint] = useState(null);
   const confirmed = filteredBookings.filter(b => b.status === "Confirmed").length;
   return (
     <div className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
@@ -68,10 +71,25 @@ const MyBookings = () => {
           </div>
         ) : (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {filteredBookings.map((b) => <BookingCard key={b.id} booking={b} />)}
+            {filteredBookings.map((b) => (
+              <BookingCard
+                key={b.id}
+                booking={b}
+                onPrintTicket={(booking) => setSelectedTicketForPrint(booking)}
+              />
+            ))}
           </div>
         )}
       </div>
+
+      {/* Ticket Modal */}
+      {selectedTicketForPrint && (
+        <TicketModal
+          booking={selectedTicketForPrint}
+          isOpen={!!selectedTicketForPrint}
+          onClose={() => setSelectedTicketForPrint(null)}
+        />
+      )}
     </div>
   );
 };
