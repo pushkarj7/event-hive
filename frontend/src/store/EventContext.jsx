@@ -15,18 +15,27 @@ export const AppProvider = ({ children }) => {
   const [events, setEvents] = useState(() => {
     try { const s = localStorage.getItem("eh_events"); return s ? JSON.parse(s) : initialEvents; } catch { return initialEvents; }
   });
+  const isMockBooking = (b) => {
+    if (!b) return true;
+    const id = String(b.id || "").toLowerCase();
+    const user = String(b.user || "").toLowerCase();
+    const event = String(b.event || b.title || "").toLowerCase();
+    if (["#001", "#002", "#003", "#004", "1", "2", "3", "4"].includes(id)) return true;
+    if (["aman kumar", "priya sharma", "rahul verma", "neha singh"].includes(user)) return true;
+    if (event.includes("tech conference") || event.includes("music fest") || event.includes("sports meetup")) return true;
+    return false;
+  };
+
   const [bookings, setBookings] = useState(() => {
     try {
       const s = localStorage.getItem("eh_bookings");
       if (s) {
         const parsed = JSON.parse(s);
-        // Clear old sample mock bookings if present
-        const isMockList = Array.isArray(parsed) && parsed.length > 0 && parsed.every((b) => ["#001", "#002", "#003", "#004"].includes(b.id));
-        if (isMockList) {
-          localStorage.setItem("eh_bookings", JSON.stringify([]));
-          return [];
+        if (Array.isArray(parsed)) {
+          const realOnly = parsed.filter((b) => !isMockBooking(b));
+          localStorage.setItem("eh_bookings", JSON.stringify(realOnly));
+          return realOnly;
         }
-        return parsed;
       }
       return [];
     } catch {
@@ -213,21 +222,23 @@ export const AppProvider = ({ children }) => {
     e.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredBookings = searchQuery.trim() === "" ? bookings : bookings.filter((b) =>
-    b.event.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.user.toLowerCase().includes(searchQuery.toLowerCase())
+  const realBookings = bookings.filter((b) => !isMockBooking(b));
+
+  const filteredBookings = searchQuery.trim() === "" ? realBookings : realBookings.filter((b) =>
+    (b.event || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (b.user || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const stats = {
     totalEvents: events.length,
-    totalBookings: bookings.length,
-    totalAttendees: bookings.reduce((a, b) => a + (b.tickets || 1), 0),
-    totalRevenue: bookings.reduce((a, b) => a + parseInt(String(b.amount).replace(/[^0-9]/g, "") || 0), 0),
+    totalBookings: realBookings.length,
+    totalAttendees: realBookings.reduce((a, b) => a + (b.tickets || 1), 0),
+    totalRevenue: realBookings.reduce((a, b) => a + parseInt(String(b.amount).replace(/[^0-9]/g, "") || 0), 0),
   };
 
   return (
     <EventContext.Provider value={{
-      events, bookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
+      events, bookings: realBookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
       theme, toggleTheme, toasts, showToast, removeToast,
       weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking,
       updateProfile, user, authUser, isAuthenticated, login, logout, notifications,
