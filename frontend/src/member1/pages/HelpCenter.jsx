@@ -38,9 +38,9 @@ export default function HelpCenter() {
     },
     {
       icon: MessageSquare,
-      title: "Organizer Support",
-      description: "Event approvals, attendee check-in app, revenue payouts, and scanner hardware.",
-      link: "/for-organisers",
+      title: "Contact & Assistance",
+      description: "Get in touch directly with our support team for urgent queries and assistance.",
+      link: "/contact",
     },
   ];
 

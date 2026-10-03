@@ -7,7 +7,6 @@ import Events from "./member1/pages/Events";
 import EventDetails from "./member1/pages/EventDetails";
 import Artists from "./member1/pages/Artists";
 import Experiences from "./member1/pages/Experiences";
-import ForOrganisers from "./member1/pages/ForOrganisers";
 import Booking from "./member1/pages/Booking";
 import AboutUs from "./member1/pages/AboutUs";
 import ContactUs from "./member1/pages/ContactUs";
@@ -42,7 +41,6 @@ export default function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/experiences" element={<Experiences />} />
-          <Route path="/for-organisers" element={<ForOrganisers />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/event/:id" element={<EventDetails />} />

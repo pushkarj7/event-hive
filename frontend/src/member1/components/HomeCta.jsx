@@ -46,23 +46,16 @@ export default function HomeCta() {
               </h2>
 
               <p className="mt-2.5 text-sm leading-6 text-indigo-100 sm:text-base">
-                Host your event with Event Hive and reach thousands of passionate people looking for unique experiences.
+                Discover thrilling concerts, conferences, comedy shows, and unique experiences happening around you.
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                 <Link
-                  to="/for-organisers"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl"
-                >
-                  <span>List Your Event</span>
-                  <ArrowRight size={16} />
-                </Link>
-
-                <Link
                   to="/events"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/10"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-primary shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl"
                 >
-                  Explore Events
+                  <span>Explore All Events</span>
+                  <ArrowRight size={16} />
                 </Link>
               </div>
             </div>

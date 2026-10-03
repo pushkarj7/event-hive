@@ -9,7 +9,6 @@ const navigationLinks = [
   { label: "Events", to: "/events" },
   { label: "Artists", to: "/artists" },
   { label: "Experiences", to: "/experiences" },
-  { label: "For Organisers", to: "/for-organisers" },
 ];
 
 function Navbar() {

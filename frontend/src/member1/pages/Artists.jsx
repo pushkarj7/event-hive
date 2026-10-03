@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   Search,
   MapPin,
@@ -473,12 +474,12 @@ export default function Artists() {
             Get verified on Event Hive. Publish your tour dates, sell verified passes without scalping, and connect with over 2 Million passionate fans.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <a
-              href="/for-organisers"
+            <Link
+              to="/contact"
               className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-dark"
             >
-              Get Verified & List Shows
-            </a>
+              Contact Creator Support
+            </Link>
           </div>
         </div>
       </section>
