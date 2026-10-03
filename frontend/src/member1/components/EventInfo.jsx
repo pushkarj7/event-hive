@@ -2,7 +2,7 @@ function EventInfo({event}){
     return(
         <div className="flex flex-col">
           {/* category */}
-          <span className="w-fit rounde-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+          <span className="w-fit round-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
              {event.category}
            </span>
            {/* title */}
@@ -10,7 +10,7 @@ function EventInfo({event}){
             {event.title}
            </h1>
            {/* date & time */}
-           <div className="mt-6 flex items-centergap-3 text-text-secondary">
+           <div className="mt-6 flex items-center gap-3 text-text-secondary">
            <span>📅</span>
            <span>
             {event.date} . {event.time}

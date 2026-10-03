@@ -10,7 +10,7 @@ function HeroImageGallery({images}){
              {/* previous button */}
              <button
              type="button" 
-             className="absolute left-4 top1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-text shadouw-md transition hover:bg-white"
+             className="absolute left-4 top1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-text shadow-md transition hover:bg-white"
              aria-label="Previous image"
              >
               ←
