@@ -54,25 +54,56 @@ export const AppProvider = ({ children }) => {
     return newEv;
   };
 
-  const addBooking = (eventId, opts = {}) => {
-    const ev = events.find((e) => String(e.id) === String(eventId));
-    if (!ev) return null;
-    const tickets = opts.tickets || 1;
-    const attendee = opts.attendeeName || user.name;
-    const nb = {
-      id: "#" + String(bookings.length + 1).padStart(3, "0"),
-      eventId: ev.id,
-      event: ev.title,
-      image: ev.image,
-      location: ev.location,
-      price: ev.price,
-      user: attendee,
-      attendeeEmail: opts.attendeeEmail || user.email || "",
-      date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
-      tickets,
-      amount: "₹" + (ev.price * tickets).toLocaleString("en-IN"),
-      status: "Confirmed",
-    };
+  const addBooking = (bookingOrEventId, opts = {}) => {
+    let nb;
+    if (typeof bookingOrEventId === "object" && bookingOrEventId !== null) {
+      const data = bookingOrEventId;
+      const t = Number(data.tickets) || 1;
+      const p = Number(data.price) || 999;
+      const amtStr = typeof data.amount === "number"
+        ? `₹${data.amount.toLocaleString("en-IN")}`
+        : (data.amount || `₹${(p * t).toLocaleString("en-IN")}`);
+
+      nb = {
+        id: data.id || "#" + String(bookings.length + 1).padStart(3, "0"),
+        eventId: data.eventId || data.id || Date.now(),
+        event: data.event || data.title || data.eventTitle || "Special Event",
+        image: data.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+        location: data.location || data.venue || "Venue, India",
+        price: p,
+        user: data.user || data.fullName || user.name,
+        attendeeEmail: data.email || data.attendeeEmail || user.email || "",
+        attendeePhone: data.phone || data.attendeePhone || user.phone || "",
+        date: data.date || data.formattedDate || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+        tickets: t,
+        amount: amtStr,
+        paymentMethod: data.paymentMethod || "UPI",
+        status: "Confirmed",
+      };
+    } else {
+      const ev = events.find((e) => String(e.id) === String(bookingOrEventId)) || {};
+      const tickets = opts.tickets || 1;
+      const attendee = opts.attendeeName || opts.fullName || user.name;
+      const price = ev.price || opts.price || 999;
+      nb = {
+        id: opts.id || "#" + String(bookings.length + 1).padStart(3, "0"),
+        eventId: ev.id || bookingOrEventId,
+        event: ev.title || opts.title || "Special Event",
+        image: ev.image || opts.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+        location: ev.location || opts.location || "Venue, India",
+        price,
+        user: attendee,
+        attendeeEmail: opts.attendeeEmail || opts.email || user.email || "",
+        attendeePhone: opts.attendeePhone || opts.phone || user.phone || "",
+        date: opts.date || ev.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+        tickets,
+        amount: opts.amount
+          ? (typeof opts.amount === "number" ? `₹${opts.amount.toLocaleString("en-IN")}` : opts.amount)
+          : `₹${(price * tickets).toLocaleString("en-IN")}`,
+        paymentMethod: opts.paymentMethod || "UPI",
+        status: "Confirmed",
+      };
+    }
     setBookings((p) => [nb, ...p]);
     return nb;
   };

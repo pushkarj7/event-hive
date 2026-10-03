@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   CheckCircle,
   ArrowLeft,
+  Lock,
 } from "lucide-react";
 import { ALL_EVENTS } from "../data/eventsData";
 import { DETAILED_ARTISTS } from "../data/artistsData";
@@ -15,7 +16,7 @@ import { useAppStore } from "../../store/EventContext";
 export default function Booking() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addBooking } = useAppStore();
+  const { addBooking, isAuthenticated, user } = useAppStore();
 
   // Find event by ID, or match artist event, or fallback to first event
   const event = (() => {
@@ -73,14 +74,44 @@ export default function Booking() {
   });
 
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+    fullName: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
   });
 
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingId, setBookingId] = useState("");
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-16 font-sans">
+        <div className="max-w-md w-full rounded-3xl border border-slate-200 bg-surface p-8 text-center shadow-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-primary ring-8 ring-indigo-50/50">
+            <Lock size={32} />
+          </div>
+          <h2 className="mt-5 text-2xl font-bold text-text">Please Log In to Book</h2>
+          <p className="mt-2 text-sm leading-6 text-text-secondary">
+            You must be logged in to book passes for <span className="font-semibold text-text">{event.title}</span>. This ensures your tickets are saved to your account.
+          </p>
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              to="/login"
+              className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-white shadow-md hover:bg-primary-dark transition text-center"
+            >
+              Sign In to Continue
+            </Link>
+            <Link
+              to="/register"
+              className="w-full rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-text hover:bg-slate-50 transition text-center"
+            >
+              Create Free Account
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const ticketPrices = {
     general: event?.price || 999,
@@ -119,19 +150,20 @@ export default function Booking() {
     if (addBooking) {
       addBooking({
         id: generatedId,
-        eventTitle: event.title,
+        eventId: event.id,
+        event: event.title,
         title: event.title,
         category: event.category,
         location: event.location || event.venue,
         venue: event.venue || event.location,
-        eventDate: event.date || event.formattedDate,
-        date: event.date || event.formattedDate,
+        date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
         amount: totalAmount,
-        price: `₹${totalAmount.toLocaleString("en-IN")}`,
+        price: ticketPrices.general,
         tickets: totalTickets,
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
+        user: formData.fullName || user?.name || "Attendee",
+        fullName: formData.fullName || user?.name || "Attendee",
+        email: formData.email || user?.email || "",
+        phone: formData.phone || user?.phone || "",
         paymentMethod,
         image: event.image,
         status: "Confirmed",
@@ -194,10 +226,16 @@ export default function Booking() {
               </div>
             </div>
 
-            <div className="mt-8 flex justify-center gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+              <Link
+                to="/my-bookings"
+                className="rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition text-center"
+              >
+                View in My Bookings →
+              </Link>
               <Link
                 to="/events"
-                className="rounded-xl bg-primary px-6 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-primary-dark"
+                className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-xs font-semibold text-text shadow-xs hover:bg-slate-50 transition text-center"
               >
                 Browse More Events
               </Link>

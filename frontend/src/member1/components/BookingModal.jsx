@@ -1,6 +1,12 @@
-import { useState } from "react";
-import { X, Star, MapPin, Calendar, ShieldCheck, CheckCircle, Ticket } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Star, MapPin, Calendar, ShieldCheck, CheckCircle, Ticket, Lock, ArrowRight } from "lucide-react";
+import { useAppStore } from "../../store/EventContext";
+import { useNavigate } from "react-router-dom";
+
 export default function BookingModal({ event, isOpen, onClose }) {
+  const { isAuthenticated, user, addBooking } = useAppStore();
+  const navigate = useNavigate();
+
   const [quantities, setQuantities] = useState({
     general: 1,
     vip: 0,
@@ -8,10 +14,20 @@ export default function BookingModal({ event, isOpen, onClose }) {
   });
 
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+    fullName: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        fullName: prev.fullName || user.name || "",
+        email: prev.email || user.email || "",
+        phone: prev.phone || user.phone || "",
+      }));
+    }
+  }, [user]);
 
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -28,7 +44,6 @@ export default function BookingModal({ event, isOpen, onClose }) {
   const handleQuantityChange = (type, delta) => {
     setQuantities((prev) => {
       const nextVal = Math.max(0, (prev[type] || 0) + delta);
-      // Ensure at least one ticket is selected overall if general is 0
       return {
         ...prev,
         [type]: nextVal,
@@ -51,12 +66,41 @@ export default function BookingModal({ event, isOpen, onClose }) {
 
   const handleProceedToPay = (e) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      onClose();
+      navigate("/login");
+      return;
+    }
     if (totalAmount <= 0) {
       alert("Please select at least 1 ticket to proceed.");
       return;
     }
     const generatedId = "EH-" + Math.floor(100000 + Math.random() * 900000);
     setBookingId(generatedId);
+
+    if (addBooking) {
+      addBooking({
+        id: generatedId,
+        eventId: event.id,
+        event: event.title,
+        title: event.title,
+        category: event.category,
+        location: event.location || event.venue,
+        venue: event.venue || event.location,
+        date: event.formattedDate || event.date || new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+        amount: totalAmount,
+        price: ticketPrices.general,
+        tickets: totalTickets,
+        user: formData.fullName || user?.name || "Attendee",
+        fullName: formData.fullName || user?.name || "Attendee",
+        email: formData.email || user?.email || "",
+        phone: formData.phone || user?.phone || "",
+        paymentMethod,
+        image: event.image,
+        status: "Confirmed",
+      });
+    }
+
     setIsSuccess(true);
   };
 
@@ -66,7 +110,7 @@ export default function BookingModal({ event, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm transition-opacity">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm transition-opacity font-sans">
       <div className="relative my-8 w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-surface shadow-2xl transition-all">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
@@ -75,7 +119,11 @@ export default function BookingModal({ event, isOpen, onClose }) {
               <Ticket size={16} />
             </span>
             <h2 className="text-lg font-bold text-text">
-              {isSuccess ? "Booking Confirmation" : "Complete Your Booking"}
+              {!isAuthenticated
+                ? "Login Required"
+                : isSuccess
+                ? "Booking Confirmation"
+                : "Complete Your Booking"}
             </h2>
           </div>
           <button
@@ -87,8 +135,45 @@ export default function BookingModal({ event, isOpen, onClose }) {
           </button>
         </div>
 
-        {isSuccess ? (
-          /* Success Screen */
+        {/* 1. Login Gate if not authenticated */}
+        {!isAuthenticated ? (
+          <div className="p-8 text-center sm:p-12">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-primary ring-8 ring-indigo-50/50">
+              <Lock size={30} />
+            </div>
+            <h3 className="mt-5 text-2xl font-bold text-text">
+              Please Log In to Book
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-text-secondary">
+              You must be logged in to book passes for{" "}
+              <span className="font-semibold text-text">{event.title}</span>. Your booked tickets will be securely stored under your account.
+            </p>
+
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row max-w-sm mx-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate("/login");
+                }}
+                className="flex-1 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-primary-dark transition text-center"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate("/register");
+                }}
+                className="flex-1 rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-text hover:bg-slate-50 transition text-center"
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        ) : isSuccess ? (
+          /* 2. Success Screen */
           <div className="p-8 text-center sm:p-12">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-8 ring-emerald-50">
               <CheckCircle size={36} />
@@ -97,8 +182,7 @@ export default function BookingModal({ event, isOpen, onClose }) {
               Booking Confirmed! 🎉
             </h3>
             <p className="mt-2 text-sm text-text-secondary">
-              Thank you, <span className="font-semibold text-text">{formData.fullName}</span>! Your e-tickets have been sent to{" "}
-              <span className="font-medium text-text">{formData.email}</span>.
+              Thank you, <span className="font-semibold text-text">{formData.fullName}</span>! Your e-tickets are confirmed and added to your bookings.
             </p>
 
             <div className="mx-auto mt-6 max-w-md rounded-xl border border-slate-200 bg-slate-50/70 p-4 text-left">
@@ -113,7 +197,7 @@ export default function BookingModal({ event, isOpen, onClose }) {
                 <span className="font-semibold text-text">{event.title}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-text-secondary">
-                <span>Venue & City</span>
+                <span>Venue &amp; City</span>
                 <span className="text-text">{event.location || event.venue}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-text-secondary">
@@ -130,33 +214,45 @@ export default function BookingModal({ event, isOpen, onClose }) {
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <button
+                type="button"
+                onClick={() => {
+                  resetAndClose();
+                  navigate("/my-bookings");
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:bg-primary-dark"
+              >
+                <span>View in My Bookings</span>
+                <ArrowRight size={15} />
+              </button>
+              <button
+                type="button"
                 onClick={resetAndClose}
-                className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-dark"
+                className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-text shadow-xs hover:bg-slate-50 transition-all"
               >
                 Done / Explore More
               </button>
             </div>
           </div>
         ) : (
-          /* Main Booking Form Matching the Reference Image */
-          <form onSubmit={handleProceedToPay} className="grid gap-6 p-6 lg:grid-cols-12 lg:gap-8">
-            {/* Left Column: Event Summary & Select Tickets */}
+          /* 3. Booking Form */
+          <form
+            onSubmit={handleProceedToPay}
+            className="grid gap-6 p-6 sm:p-8 lg:grid-cols-12"
+          >
+            {/* Left Column: Event Summary & Ticket Counter */}
             <div className="space-y-6 lg:col-span-7">
-              {/* Event Summary Card */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
-                <h4 className="text-xs font-semibold tracking-wider text-text-secondary uppercase">
-                  Event Summary
-                </h4>
-                <div className="mt-3 flex gap-4">
+              {/* Event Summary */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                <div className="flex gap-4">
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="h-20 w-24 rounded-lg object-cover shadow-sm sm:h-24 sm:w-28"
+                    className="h-20 w-24 rounded-lg object-cover sm:h-24 sm:w-28"
                   />
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between">
-                        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                           {event.category}
                         </span>
                         <span className="text-sm font-bold text-text">
@@ -179,10 +275,10 @@ export default function BookingModal({ event, isOpen, onClose }) {
                       </p>
                     </div>
 
-                    <div className="mt-1 flex items-center gap-1 text-xs">
-                      <Star size={13} className="fill-amber-400 text-amber-400" />
-                      <span className="font-semibold text-text">{event.rating || 4.8}</span>
-                      <span className="text-text-secondary">({event.reviews || "2.4K"})</span>
+                    <div className="flex items-center gap-1 text-xs">
+                      <Star size={12} className="fill-amber-400 text-amber-400" />
+                      <span className="font-semibold text-text">{event.rating || "4.8"}</span>
+                      <span className="text-text-secondary">({event.reviews || "1.2k"})</span>
                     </div>
                   </div>
                 </div>
@@ -192,105 +288,87 @@ export default function BookingModal({ event, isOpen, onClose }) {
               <div>
                 <h4 className="text-sm font-bold text-text">Select Tickets</h4>
                 <div className="mt-3 space-y-3">
-                  {/* General Admission */}
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-surface p-3.5 shadow-xs transition-colors hover:border-slate-300">
+                  {/* General Ticket */}
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 hover:border-slate-300">
                     <div>
-                      <p className="text-sm font-semibold text-text">
-                        General Admission
-                      </p>
+                      <p className="text-sm font-semibold text-text">General Admission</p>
                       <p className="text-xs font-bold text-primary">
                         ₹{ticketPrices.general.toLocaleString("en-IN")}
-                      </p>
-                      <p className="text-[11px] text-text-secondary">
-                        Standard entry pass to all event zones
                       </p>
                     </div>
                     <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("general", -1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         -
                       </button>
-                      <span className="w-5 text-center text-sm font-semibold text-text">
+                      <span className="w-5 text-center text-sm font-semibold">
                         {quantities.general}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("general", 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         +
                       </button>
                     </div>
                   </div>
 
-                  {/* VIP Pass */}
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-surface p-3.5 shadow-xs transition-colors hover:border-slate-300">
+                  {/* VIP Ticket */}
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 hover:border-slate-300">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-text">VIP Pass</p>
-                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">
-                          Priority
-                        </span>
-                      </div>
+                      <p className="text-sm font-semibold text-text">VIP Pass</p>
                       <p className="text-xs font-bold text-primary">
                         ₹{ticketPrices.vip.toLocaleString("en-IN")}
-                      </p>
-                      <p className="text-[11px] text-text-secondary">
-                        Front row view + lounge access & welcome drink
                       </p>
                     </div>
                     <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("vip", -1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         -
                       </button>
-                      <span className="w-5 text-center text-sm font-semibold text-text">
+                      <span className="w-5 text-center text-sm font-semibold">
                         {quantities.vip}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("vip", 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         +
                       </button>
                     </div>
                   </div>
 
-                  {/* Group Pass */}
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-surface p-3.5 shadow-xs transition-colors hover:border-slate-300">
+                  {/* Group Ticket */}
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 hover:border-slate-300">
                     <div>
-                      <p className="text-sm font-semibold text-text">
-                        Group Pass (4 People)
-                      </p>
+                      <p className="text-sm font-semibold text-text">Group Pass (4 People)</p>
                       <p className="text-xs font-bold text-primary">
                         ₹{ticketPrices.group.toLocaleString("en-IN")}
-                      </p>
-                      <p className="text-[11px] text-text-secondary">
-                        Save 15% on group entry for 4 attendees
                       </p>
                     </div>
                     <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 p-1">
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("group", -1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         -
                       </button>
-                      <span className="w-5 text-center text-sm font-semibold text-text">
+                      <span className="w-5 text-center text-sm font-semibold">
                         {quantities.group}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleQuantityChange("group", 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold text-slate-700 shadow-xs hover:bg-slate-100"
+                        className="flex h-7 w-7 items-center justify-center rounded bg-white text-sm font-bold shadow-xs hover:bg-slate-100"
                       >
                         +
                       </button>
@@ -298,7 +376,6 @@ export default function BookingModal({ event, isOpen, onClose }) {
                   </div>
                 </div>
 
-                {/* Total Calculation Row */}
                 <div className="mt-4 flex items-center justify-between rounded-xl bg-primary/5 px-4 py-3">
                   <span className="text-sm font-medium text-text">Total Amount</span>
                   <span className="text-xl font-bold text-primary">
@@ -308,9 +385,9 @@ export default function BookingModal({ event, isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Right Column: User Details & Payment Method */}
+            {/* Right Column: Attendee Info & Payment */}
             <div className="space-y-6 lg:col-span-5">
-              {/* User Details */}
+              {/* Attendee Details */}
               <div>
                 <h4 className="text-sm font-bold text-text">Your Details</h4>
                 <div className="mt-3 space-y-3">
@@ -324,7 +401,7 @@ export default function BookingModal({ event, isOpen, onClose }) {
                       required
                       value={formData.fullName}
                       onChange={handleFormChange}
-                      placeholder="e.g. John Doe"
+                      placeholder="e.g. Rahul Sharma"
                       className="mt-1 w-full rounded-lg border border-slate-200 bg-surface px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
@@ -338,7 +415,7 @@ export default function BookingModal({ event, isOpen, onClose }) {
                       required
                       value={formData.email}
                       onChange={handleFormChange}
-                      placeholder="john@example.com"
+                      placeholder="rahul@example.com"
                       className="mt-1 w-full rounded-lg border border-slate-200 bg-surface px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
                     />
                   </div>
