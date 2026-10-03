@@ -61,7 +61,9 @@ html.dark body {
 }
 
 /* Core surfaces & containers */
-html.dark .bg-surface {
+html.dark .bg-surface,
+html.dark .bg-surface\/95,
+html.dark .bg-surface\/90 {
     background-color: #121927 !important;
 }
 
@@ -73,6 +75,15 @@ html.dark .bg-white:not(.dark-preserve-white) {
     background-color: #121927 !important;
 }
 
+/* Translucent frosted glass headers & panels in Dark Mode */
+html.dark .bg-white\/95,
+html.dark .bg-white\/90,
+html.dark .bg-white\/80,
+html.dark .bg-white\/70,
+html.dark .bg-white\/60 {
+    background-color: rgba(18, 25, 39, 0.88) !important;
+}
+
 html.dark .bg-\[\#F8FAFC\] {
     background-color: #0B0F19 !important;
 }
@@ -81,7 +92,14 @@ html.dark .bg-\[\#F8FAFC\] {
 html.dark .border-slate-100,
 html.dark .border-slate-200,
 html.dark .border-slate-300,
-html.dark .border-border {
+html.dark .border-border,
+html.dark .border-slate-200\/60,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/90,
+html.dark .border-white\/60,
+html.dark .border-white\/20,
+html.dark .border-white\/15,
+html.dark .border-white\/10 {
     border-color: #1E2B45 !important;
 }
 
@@ -91,6 +109,13 @@ html.dark .bg-slate-100 {
     background-color: #172134 !important;
 }
 
+html.dark .bg-slate-50\/50,
+html.dark .bg-slate-50\/60,
+html.dark .bg-slate-50\/70,
+html.dark .bg-slate-50\/80 {
+    background-color: rgba(23, 33, 52, 0.75) !important;
+}
+
 html.dark .hover\:bg-slate-50:hover,
 html.dark .hover\:bg-slate-100:hover {
     background-color: #1E2A42 !important;
@@ -98,6 +123,17 @@ html.dark .hover\:bg-slate-100:hover {
 
 html.dark .bg-slate-200\/60 {
     background-color: #182337 !important;
+}
+
+/* Background blob gradients in Dark Mode (soft subtle glows instead of harsh white glows) */
+html.dark .from-indigo-200\/25,
+html.dark .from-indigo-200\/30 {
+    --tw-gradient-from: rgba(99, 102, 241, 0.12) !important;
+}
+
+html.dark .from-violet-100\/20,
+html.dark .from-violet-200\/20 {
+    --tw-gradient-from: rgba(139, 92, 246, 0.1) !important;
 }
 
 /* High-contrast Action Buttons (prevents buttons from disappearing in dark cards) */
@@ -265,6 +301,24 @@ html.dark aside .bg-indigo-100 p {
 html.dark .shadow-xl,
 html.dark .shadow-2xl {
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Range input accent in dark mode */
+html.dark input[type="range"] {
+    accent-color: #6366F1 !important;
+}
+
+/* Table styling in Dark Mode */
+html.dark table thead tr {
+    border-color: #1E2B45 !important;
+}
+
+html.dark table tbody tr {
+    border-color: #182337 !important;
+}
+
+html.dark table tbody tr:hover {
+    background-color: #172134 !important;
 }
 
 /* Print Styles for E-Ticket */

@@ -7,12 +7,7 @@ export const initialEvents = [
   { id: 6, title: "Theatre Night", location: "Kolkata", price: 599, category: "Theatre", date: "2026-11-05", rating: 4.4, image: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf", status: "Upcoming" },
 ];
 
-export const initialBookings = [
-  { id: "#001", eventId: 1, event: "Tech Conference 2026", user: "Aman Kumar", date: "28 Sep 2026", tickets: 2, amount: "₹2,000", status: "Confirmed" },
-  { id: "#002", eventId: 2, event: "Music Fest", user: "Priya Sharma", date: "27 Sep 2026", tickets: 4, amount: "₹4,800", status: "Confirmed" },
-  { id: "#003", eventId: 3, event: "Sports Meetup", user: "Rahul Verma", date: "26 Sep 2026", tickets: 1, amount: "₹999", status: "Pending" },
-  { id: "#004", eventId: 1, event: "Tech Conference 2026", user: "Neha Singh", date: "25 Sep 2026", tickets: 3, amount: "₹3,000", status: "Confirmed" },
-];
+export const initialBookings = [];
 
 export const weeklyBookings = [
   { day: "Mon", value: 38 },

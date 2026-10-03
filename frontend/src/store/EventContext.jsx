@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import { initialEvents, initialBookings, weeklyBookings as defaultWeekly } from "../data/mockData";
+import { initialEvents, weeklyBookings as defaultWeekly } from "../data/mockData";
 import ToastContainer from "../member1/components/ToastContainer";
 
 const EventContext = createContext(null);
@@ -16,7 +16,22 @@ export const AppProvider = ({ children }) => {
     try { const s = localStorage.getItem("eh_events"); return s ? JSON.parse(s) : initialEvents; } catch { return initialEvents; }
   });
   const [bookings, setBookings] = useState(() => {
-    try { const s = localStorage.getItem("eh_bookings"); return s ? JSON.parse(s) : initialBookings; } catch { return initialBookings; }
+    try {
+      const s = localStorage.getItem("eh_bookings");
+      if (s) {
+        const parsed = JSON.parse(s);
+        // Clear old sample mock bookings if present
+        const isMockList = Array.isArray(parsed) && parsed.length > 0 && parsed.every((b) => ["#001", "#002", "#003", "#004"].includes(b.id));
+        if (isMockList) {
+          localStorage.setItem("eh_bookings", JSON.stringify([]));
+          return [];
+        }
+        return parsed;
+      }
+      return [];
+    } catch {
+      return [];
+    }
   });
   const [wishlist, setWishlist] = useState(() => {
     try {
@@ -206,8 +221,8 @@ export const AppProvider = ({ children }) => {
   const stats = {
     totalEvents: events.length,
     totalBookings: bookings.length,
-    totalAttendees: bookings.reduce((a, b) => a + (b.tickets || 1), 0) + 1276,
-    totalRevenue: bookings.reduce((a, b) => a + parseInt(String(b.amount).replace(/[^0-9]/g, "") || 0), 0) + 124580 - 10800,
+    totalAttendees: bookings.reduce((a, b) => a + (b.tickets || 1), 0),
+    totalRevenue: bookings.reduce((a, b) => a + parseInt(String(b.amount).replace(/[^0-9]/g, "") || 0), 0),
   };
 
   return (

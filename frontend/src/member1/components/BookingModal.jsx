@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, Star, MapPin, Calendar, ShieldCheck, CheckCircle, Ticket, Lock, ArrowRight, Printer } from "lucide-react";
 import { useAppStore } from "../../store/EventContext";
 import { useNavigate } from "react-router-dom";
@@ -14,21 +14,11 @@ export default function BookingModal({ event, isOpen, onClose }) {
     group: 0,
   });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     fullName: user?.name || "",
     email: user?.email || "",
     phone: user?.phone || "",
-  });
-
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        fullName: prev.fullName || user.name || "",
-        email: prev.email || user.email || "",
-        phone: prev.phone || user.phone || "",
-      }));
-    }
-  }, [user]);
+  }));
 
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSuccess, setIsSuccess] = useState(false);

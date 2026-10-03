@@ -1,4 +1,4 @@
-import { X, Printer, ShieldCheck, Calendar, MapPin, Ticket, Sparkles } from "lucide-react";
+import { Printer, ShieldCheck, Calendar, MapPin, Sparkles } from "lucide-react";
 import EventHiveLogo from "./EventHiveLogo";
 
 export default function TicketModal({ booking, isOpen, onClose }) {

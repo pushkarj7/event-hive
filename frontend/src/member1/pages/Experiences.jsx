@@ -231,13 +231,13 @@ export default function Experiences() {
   const liveEvents = useMemo(() => {
     const combined = [...ALL_EVENTS];
     if (Array.isArray(customEvents)) {
-      customEvents.forEach((ce) => {
+      customEvents.forEach((ce, idx) => {
         const exists = combined.some(
           (e) => String(e.id) === String(ce.id) || e.title.toLowerCase() === ce.title?.toLowerCase()
         );
         if (!exists && ce.title) {
           combined.push({
-            id: ce.id || Date.now(),
+            id: ce.id || `custom-event-${idx}`,
             title: ce.title,
             category: ce.category || "General",
             date: ce.date || "2026-12-01",
@@ -267,7 +267,7 @@ export default function Experiences() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   // Available categories list
-  const categories = ["All", "Music", "Tech", "Arts", "Sports", "Food"];
+  const categories = useMemo(() => ["All", "Music", "Tech", "Arts", "Sports", "Food"], []);
 
   // Category review counts
   const categoryCounts = useMemo(() => {
@@ -278,7 +278,7 @@ export default function Experiences() {
       }
     });
     return counts;
-  }, [reviews]);
+  }, [reviews, categories]);
 
   // Filter and sort reviews
   const filteredReviews = useMemo(() => {

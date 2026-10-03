@@ -6,7 +6,6 @@ import { ALL_EVENTS } from "../../member1/data/eventsData";
 import {
   CalendarDays,
   Ticket,
-  Users,
   IndianRupee,
   LayoutDashboard,
   Save,
@@ -39,10 +38,10 @@ const Profile = () => {
   const allAvailableEvents = useMemo(() => {
     const list = [...ALL_EVENTS];
     if (Array.isArray(events)) {
-      events.forEach((ce) => {
+      events.forEach((ce, idx) => {
         if (!list.some((e) => String(e.id) === String(ce.id))) {
           list.push({
-            id: ce.id || Date.now(),
+            id: ce.id || `custom-${idx}-${ce.title || 'event'}`,
             title: ce.title,
             category: ce.category || "General",
             date: ce.date || "2026-12-01",
