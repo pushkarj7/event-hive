@@ -2,20 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import { ArrowLeft, Sparkles, MapPin, CalendarDays, Tag, IndianRupee, Image, FileText, Check, LayoutDashboard, UserRound, Home } from "lucide-react";
-
-const cats = [
-  { v: "Technology", emoji: "💻" },
-  { v: "Concerts", emoji: "🎵" },
-  { v: "Business", emoji: "💼" },
-  { v: "Art", emoji: "🎨" },
-  { v: "Theatre", emoji: "🎭" },
-  { v: "Sports", emoji: "⚽" },
-];
+import { CATEGORIES_DATA } from "../../member1/components/EventCategories";
 
 const CreateEvent = () => {
   const { addEvent } = useAppStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: "", category: "Technology", location: "", price: "", date: "", image: "", description: "" });
+  const [form, setForm] = useState({ title: "", category: "Music", location: "", price: "", date: "", image: "", description: "" });
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(null);
 
@@ -94,23 +86,33 @@ const CreateEvent = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700"><Tag size={12} className="text-violet-600" /> Category <span className="ml-1 rounded-full bg-amber-100 border border-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">3D • hover to tilt</span></label>
-                  <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-6 perspective-[1000px]">
-                    {cats.map(c => {
-                      const active = form.category === c.v;
+                  <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700"><Tag size={12} className="text-violet-600" /> Select Category *</label>
+                  <div className="mt-3 grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-6">
+                    {CATEGORIES_DATA.map((cat) => {
+                      const Icon = cat.icon;
+                      const isSelected = form.category === cat.name;
                       return (
                         <button
-                          key={c.v}
+                          key={cat.id}
                           type="button"
-                          onClick={() => setForm({...form, category: c.v})}
-                          className={"group relative flex flex-col items-center justify-center rounded-2xl border-2 px-2 py-4 text-center transition-all duration-300 transform-3d " + (active ? "bg-linear-to-br from-slate-900 via-slate-800 to-black border-slate-900 text-white shadow-[0_6px_0_#020617,0_14px_28px_rgba(15,23,42,0.35),inset_0_1px_0_rgba(255,255,255,0.15)] -translate-y-1 scale-[1.03]" : "bg-linear-to-br from-white to-slate-50 border-slate-200 text-slate-700 shadow-[0_5px_0_#e2e8f0,0_10px_20px_rgba(15,23,42,0.07)] hover:shadow-[0_8px_0_#cbd5e1,0_16px_32px_rgba(15,23,42,0.14)] hover:-translate-y-1.5 hover:border-indigo-300") + " hover:transform-[perspective(700px)_rotateX(8deg)_rotateY(-6deg)_translateZ(18px)] active:translate-y-0 active:shadow-[0_2px_0_#cbd5e1,0_4px_10px_rgba(15,23,42,0.1)]"}
+                          onClick={() => setForm({ ...form, category: cat.name })}
+                          className={`group relative flex flex-col items-center justify-center rounded-2xl border p-2.5 text-center transition-all duration-200 ${
+                            isSelected
+                              ? "border-primary bg-primary/10 shadow-sm ring-2 ring-primary/30"
+                              : "border-slate-200 bg-white hover:border-primary/40 hover:bg-slate-50"
+                          } ${cat.bgHover}`}
                         >
-                          <span className={"pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-2xl " + (active ? "bg-linear-to-r from-transparent via-white/20 to-transparent" : "bg-linear-to-r from-transparent via-white to-transparent")} />
-                          <span className={"pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br " + (active ? "from-white/8 to-transparent" : "from-white/80 to-transparent")} />
-                          <span className={"relative flex h-9 w-9 items-center justify-center rounded-xl text-lg shadow-sm transition duration-300 group-hover:scale-110 group-hover:rotate-[-4deg] transform-[translateZ(20px)] " + (active ? "bg-white/15 border border-white/20 backdrop-blur" : "bg-white border border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.06)]")}>{c.emoji}</span>
-                          <span className="relative mt-2 block text-[11px] font-extrabold leading-tight tracking-wide transform-[translateZ(12px)]">{c.v}</span>
-                          {active && <span className="relative mt-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-slate-900 shadow-md transform-[translateZ(16px)]"><Check size={10} strokeWidth={3} /></span>}
-                          {!active && <span className="mt-1 h-1 w-6 rounded-full bg-slate-200 group-hover:bg-indigo-200 transition transform-[translateZ(8px)]" />}
+                          <div className="flex h-10 w-10 items-center justify-center transition-transform duration-200 group-hover:scale-110">
+                            <Icon />
+                          </div>
+                          <span className={`mt-1.5 text-[11px] font-bold line-clamp-1 ${isSelected ? "text-primary" : "text-slate-700"}`}>
+                            {cat.name}
+                          </span>
+                          {isSelected && (
+                            <span className="mt-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white shadow-xs">
+                              <Check size={9} strokeWidth={3} />
+                            </span>
+                          )}
                         </button>
                       );
                     })}

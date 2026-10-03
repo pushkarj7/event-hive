@@ -345,7 +345,8 @@ function MoreIcon() {
   );
 }
 
-const CATEGORIES_DATA = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const CATEGORIES_DATA = [
   {
     id: "music",
     name: "Music",
