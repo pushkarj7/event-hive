@@ -86,7 +86,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-slate-800/80 bg-[#0B0F19] text-slate-300">
+    <footer className="border-t border-border bg-surface text-text-secondary">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] lg:gap-10">
           {/* Brand & Socials Column */}
@@ -97,17 +97,17 @@ export default function Footer() {
                   <EventHiveLogo size={36} showText={false} />
                 </div>
                 <div>
-                  <span className="text-xl font-bold tracking-tight text-white">
+                  <span className="text-xl font-bold tracking-tight text-text">
                     Event <span className="text-primary">Hive</span>
                   </span>
-                  <p className="text-[10px] tracking-widest text-slate-400 uppercase">
+                  <p className="text-[10px] tracking-widest text-text-secondary uppercase">
                     Discover • Book • Experience
                   </p>
                 </div>
               </div>
             </Link>
 
-            <p className="mt-4 text-sm leading-6 text-slate-400">
+            <p className="mt-4 text-sm leading-6 text-text-secondary">
               India's premier platform for live concerts, comedy tours, tech conferences, and curated nightlife experiences. Join over 2 Million attendees making every moment count.
             </p>
 
@@ -121,7 +121,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={social.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700/80 bg-slate-800/80 text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-white"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-white"
                   >
                     <Icon size={16} />
                   </a>
@@ -132,7 +132,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider text-white uppercase">
+            <h3 className="text-sm font-semibold tracking-wider text-text uppercase">
               Quick Links
             </h3>
             <ul className="mt-4 space-y-2.5 text-sm">
@@ -140,7 +140,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-slate-400 transition-colors duration-150 hover:text-white"
+                    className="text-text-secondary transition-colors duration-150 hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -151,7 +151,7 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider text-white uppercase">
+            <h3 className="text-sm font-semibold tracking-wider text-text uppercase">
               Support
             </h3>
             <ul className="mt-4 space-y-2.5 text-sm">
@@ -159,7 +159,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-slate-400 transition-colors duration-150 hover:text-white"
+                    className="text-text-secondary transition-colors duration-150 hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -170,28 +170,28 @@ export default function Footer() {
 
           {/* Newsletter Form */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider text-white uppercase">
+            <h3 className="text-sm font-semibold tracking-wider text-text uppercase">
               Get Tour Alerts
             </h3>
-            <p className="mt-3 text-xs text-slate-400 leading-relaxed">
+            <p className="mt-3 text-xs text-text-secondary leading-relaxed">
               Subscribe to get secret pre-sale passes, exclusive discount codes, and weekly gig alerts in your city.
             </p>
 
             {subscribed ? (
-              <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-400">
+              <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 size={16} className="shrink-0" />
                 <span>You're subscribed! Keep an eye on your inbox.</span>
               </div>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="mt-4 space-y-2">
-                <div className="flex rounded-xl border border-slate-700 bg-slate-800/90 p-1 focus-within:border-primary">
+                <div className="flex rounded-xl border border-border bg-background p-1 focus-within:border-primary">
                   <input
                     type="email"
                     required
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-transparent px-3 py-1.5 text-xs text-white outline-none placeholder:text-slate-500"
+                    className="w-full bg-transparent px-3 py-1.5 text-xs text-text outline-none placeholder:text-slate-400"
                   />
                   <button
                     type="submit"
@@ -201,7 +201,7 @@ export default function Footer() {
                     <span>Join</span>
                   </button>
                 </div>
-                <span className="block text-[11px] text-slate-500">
+                <span className="block text-[11px] text-text-secondary">
                   No spam ever. Unsubscribe anytime.
                 </span>
               </form>
@@ -210,7 +210,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright line */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-6 text-xs text-slate-500 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-text-secondary sm:flex-row">
           <p>© 2026 Event Hive Technologies Pvt Ltd. All rights reserved.</p>
         </div>
       </div>

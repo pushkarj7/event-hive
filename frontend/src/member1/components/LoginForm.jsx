@@ -51,7 +51,9 @@ const LoginForm = () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 800));
       if (loginMethod === "email") login({ email, name: email.split("@")[0] });
-      else login({ phone, name: phone });
+      // Do not use the phone number as the display name — it is 10 unbroken
+      // digits and overflows every name slot in the UI.
+      else login({ phone });
       navigate("/profile");
     } finally {
       setIsLoading(false);

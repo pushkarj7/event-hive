@@ -38,7 +38,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-surface/95 dark:bg-[#121927]/95 dark:border-[#1E2B45] backdrop-blur">
+    <nav className="sticky top-0 z-50 border-b border-border bg-surface/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
         {/* Brand Logo */}
         <Link
@@ -112,12 +112,12 @@ function Navbar() {
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-xs transition hover:bg-slate-50 dark:bg-[#151F33] dark:border-[#223253] dark:hover:bg-[#1C2942]"
+                className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-border bg-surface px-3 py-1.5 shadow-xs transition hover:bg-slate-50"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
                   {user?.initial || user?.name?.[0]?.toUpperCase() || "U"}
                 </span>
-                <span className="max-w-[120px] truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                <span className="max-w-24 truncate text-sm font-semibold text-text sm:max-w-32">
                   {user?.name || "User"}
                 </span>
                 <ChevronDown
@@ -128,12 +128,12 @@ function Navbar() {
 
               {isUserMenuOpen && (
                 <div
-                  className="absolute right-0 top-12 w-56 rounded-2xl border border-slate-200 bg-white py-2 shadow-xl z-50 animate-in fade-in dark:bg-[#151F33] dark:border-[#223253]"
+                  className="absolute right-0 top-12 w-56 rounded-2xl border border-border bg-surface py-2 shadow-xl z-50 animate-in fade-in"
                   onClick={() => setIsUserMenuOpen(false)}
                 >
-                  <div className="px-4 py-2 border-b border-slate-100 dark:border-[#223253]">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{user?.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email || user?.phone || "Member"}</p>
+                  <div className="px-4 py-2 border-b border-border">
+                    <p className="text-sm font-semibold text-text truncate">{user?.name}</p>
+                    <p className="text-xs text-text-secondary truncate">{user?.email || user?.phone || "Member"}</p>
                   </div>
 
                   <Link

@@ -146,8 +146,19 @@ export const AppProvider = ({ children }) => {
   const notifications = 3;
 
   const login = (payload) => {
-    const name = payload.name || payload.email?.split("@")[0] || payload.phone || "Vivek Singh";
-    const u = { name: name.charAt(0).toUpperCase() + name.slice(1), role: "Event Organizer", initial: name.charAt(0).toUpperCase(), email: payload.email || "", phone: payload.phone || "" };
+    // Prefer a real name, then the email local-part. A raw phone number is
+    // deliberately not used as a name — 10 digits overflow every name slot.
+    const explicit = (payload.name || "").trim();
+    const fromEmail = payload.email?.split("@")[0]?.trim() || "";
+    const raw = explicit || fromEmail || "Event Organizer";
+    const name = raw.charAt(0).toUpperCase() + raw.slice(1);
+    const u = {
+      name,
+      role: "Event Organizer",
+      initial: name.charAt(0).toUpperCase(),
+      email: payload.email || "",
+      phone: payload.phone || "",
+    };
     setAuthUser(u);
     localStorage.setItem("eh_auth", JSON.stringify(u));
     showToast(`Welcome back, ${u.name}! Logged in successfully ✓`, "success");
