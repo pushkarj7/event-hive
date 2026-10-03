@@ -107,6 +107,34 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  // Sidebar visibility — shared by Sidebar and Topbar so either can toggle it.
+  // Desktop collapses to an icon rail; mobile/tablet slides it in as a drawer.
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem("eh_sidebar");
+      return saved === null ? true : saved === "true";
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("eh_sidebar", String(sidebarOpen));
+    } catch {
+      /* storage unavailable — keep in-memory state only */
+    }
+  }, [sidebarOpen]);
+
+  // Close the drawer when the viewport grows to desktop so the layout never
+  // keeps an off-canvas sidebar that the desktop grid does not account for.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = (e) => e.matches && setSidebarOpen(true);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   const [weekly] = useState(defaultWeekly);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -166,10 +194,23 @@ export const AppProvider = ({ children }) => {
   };
 
   const addEvent = (ev) => {
-    const newEv = { id: Date.now(), status: "Upcoming", rating: 4.5, ...ev };
+    // createdByUser separates organizer-created events from the seeded demo
+    // catalogue so "My Events" can show only what this user actually made.
+    const newEv = {
+      id: Date.now(),
+      status: "Upcoming",
+      rating: 4.5,
+      formattedDate: ev.date || "Upcoming",
+      city: (ev.location || "").split(",").pop()?.trim() || "India",
+      createdByUser: true,
+      ...ev,
+    };
     setEvents((p) => [newEv, ...p]);
     return newEv;
   };
+
+  // Only events this organizer created — never the seeded ALL_EVENTS catalogue.
+  const myEvents = events.filter((e) => e.createdByUser);
 
   const addBooking = (bookingOrEventId, opts = {}) => {
     let nb;
@@ -255,7 +296,8 @@ export const AppProvider = ({ children }) => {
     <EventContext.Provider value={{
       events, bookings: realBookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
       theme, toggleTheme, toasts, showToast, removeToast,
-      weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking,
+      sidebarOpen, setSidebarOpen, toggleSidebar: () => setSidebarOpen((p) => !p),
+      weekly, searchQuery, setSearchQuery, addEvent, myEvents, addBooking, cancelBooking,
       updateProfile, user, authUser, isAuthenticated, login, logout, notifications,
       stats, filteredEvents, filteredBookings
     }}>

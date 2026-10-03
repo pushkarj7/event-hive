@@ -79,7 +79,9 @@ export default function TrendingArtists() {
                   <img
                     src={artist.image}
                     alt={artist.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    // Anchored to the top so performer faces stay visible instead of
+                    // being centre-cropped out of tall portrait images.
+                    className="h-full w-full object-cover object-[center_25%] transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 

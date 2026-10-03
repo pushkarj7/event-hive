@@ -19,6 +19,7 @@ import RefundPolicy from "./member1/pages/RefundPolicy";
 import Login from "./member2/pages/Login";
 import Register from "./member2/pages/Register";
 import Dashboard from "./member2/pages/Dashboard";
+import MyEvents from "./member2/pages/MyEvents";
 import MyBookings from "./member2/pages/MyBookings";
 import Profile from "./member2/pages/Profile";
 import Wishlist from "./member2/pages/Wishlist";
@@ -80,6 +81,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-events"
+          element={
+            <ProtectedRoute>
+              <MyEvents />
             </ProtectedRoute>
           }
         />

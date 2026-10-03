@@ -1,6 +1,15 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { CATEGORIES } from "../data/eventsData";
+
+// `eventCategory` maps a browse tile onto a real `ALL_EVENTS.category` value.
+// Tiles without one (Workshops, Kids, More, ...) are not filterable yet and
+// navigate to the full listing instead of a category that has no data.
+const EVENT_CATEGORY_BY_ID = CATEGORIES.reduce((acc, cat) => {
+  if (cat.id !== "all") acc[cat.id] = cat.label;
+  return acc;
+}, {});
 
 // 3D-styled custom vibrant SVG icons matching the Event Hive design kit
 function MusicIcon() {
@@ -349,75 +358,115 @@ function MoreIcon() {
 export const CATEGORIES_DATA = [
   {
     id: "music",
+    eventCategory: "Music",
     name: "Music",
     icon: MusicIcon,
-    bgHover: "hover:border-indigo-300",
+    bgHover: "[@media(hover:hover)]:hover:border-indigo-300 active:border-indigo-300",
   },
   {
     id: "comedy",
+    eventCategory: "Comedy",
     name: "Comedy",
     icon: ComedyIcon,
-    bgHover: "hover:border-amber-300",
+    bgHover: "[@media(hover:hover)]:hover:border-amber-300 active:border-amber-300",
   },
   {
     id: "theatre",
+    eventCategory: "Theatre",
     name: "Theatre",
     icon: TheatreIcon,
-    bgHover: "hover:border-blue-300",
+    bgHover: "[@media(hover:hover)]:hover:border-blue-300 active:border-blue-300",
   },
   {
     id: "sports",
+    eventCategory: "Sports",
     name: "Sports",
     icon: SportsIcon,
-    bgHover: "hover:border-emerald-300",
+    bgHover: "[@media(hover:hover)]:hover:border-emerald-300 active:border-emerald-300",
   },
   {
     id: "workshops",
+    eventCategory: null,
     name: "Workshops",
     icon: WorkshopsIcon,
-    bgHover: "hover:border-orange-300",
+    bgHover: "[@media(hover:hover)]:hover:border-orange-300 active:border-orange-300",
   },
   {
     id: "festivals",
+    eventCategory: null,
     name: "Festivals",
     icon: FestivalsIcon,
-    bgHover: "hover:border-red-300",
+    bgHover: "[@media(hover:hover)]:hover:border-red-300 active:border-red-300",
   },
   {
     id: "food-drinks",
+    eventCategory: "Food",
     name: "Food & Drinks",
     icon: FoodDrinksIcon,
-    bgHover: "hover:border-rose-300",
+    bgHover: "[@media(hover:hover)]:hover:border-rose-300 active:border-rose-300",
   },
   {
     id: "arts-culture",
+    eventCategory: "Arts",
     name: "Arts & Culture",
     icon: ArtsCultureIcon,
-    bgHover: "hover:border-yellow-300",
+    bgHover: "[@media(hover:hover)]:hover:border-yellow-300 active:border-yellow-300",
   },
   {
     id: "kids",
+    eventCategory: null,
     name: "Kids",
     icon: KidsIcon,
-    bgHover: "hover:border-sky-300",
+    bgHover: "[@media(hover:hover)]:hover:border-sky-300 active:border-sky-300",
   },
   {
     id: "tech-business",
+    eventCategory: "Tech",
     name: "Tech & Business",
     icon: TechBusinessIcon,
-    bgHover: "hover:border-cyan-300",
+    bgHover: "[@media(hover:hover)]:hover:border-cyan-300 active:border-cyan-300",
   },
   {
     id: "more",
+    eventCategory: null,
     name: "More",
     icon: MoreIcon,
-    bgHover: "hover:border-purple-300",
+    bgHover: "[@media(hover:hover)]:hover:border-purple-300 active:border-purple-300",
   },
 ];
+
+// Attach live counts from CATEGORIES so a tile never shows a stale/blank number.
+CATEGORIES_DATA.forEach((item) => {
+  const match = item.eventCategory
+    ? EVENT_CATEGORY_BY_ID[item.eventCategory]
+    : null;
+  item.count = match
+    ? CATEGORIES.find((c) => c.label === match)?.count ?? 0
+    : null;
+});
 
 export default function EventCategories({ selectedCategory, onSelectCategory }) {
   const scrollContainerRef = useRef(null);
   const navigate = useNavigate();
+
+  // Touch devices never fire :hover, so a plain CSS hover effect is invisible on
+  // phones. This mirrors "hover" into React state: pointer devices set it on
+  // enter/leave, touch devices set it on press and clear it after a beat so the
+  // effect is actually seen instead of vanishing on the same tap that navigates.
+  const [hoveredId, setHoveredId] = useState(null);
+  const touchTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(touchTimer.current), []);
+
+  const startTouchHover = (id) => {
+    clearTimeout(touchTimer.current);
+    setHoveredId(id);
+  };
+
+  const endTouchHover = () => {
+    clearTimeout(touchTimer.current);
+    touchTimer.current = setTimeout(() => setHoveredId(null), 320);
+  };
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -450,7 +499,7 @@ export default function EventCategories({ selectedCategory, onSelectCategory }) 
                 type="button"
                 onClick={() => scroll("left")}
                 aria-label="Scroll left"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors [@media(hover:hover)]:hover:border-primary [@media(hover:hover)]:hover:text-primary active:border-primary active:text-primary"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -458,7 +507,7 @@ export default function EventCategories({ selectedCategory, onSelectCategory }) 
                 type="button"
                 onClick={() => scroll("right")}
                 aria-label="Scroll right"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-text-secondary transition-colors [@media(hover:hover)]:hover:border-primary [@media(hover:hover)]:hover:text-primary active:border-primary active:text-primary"
               >
                 <ChevronRight size={16} />
               </button>
@@ -483,35 +532,77 @@ export default function EventCategories({ selectedCategory, onSelectCategory }) 
           {CATEGORIES_DATA.map((item) => {
             const Icon = item.icon;
             const isSelected = selectedCategory === item.id;
+            // JS-driven hover mirror (works on touch, where CSS :hover never fires)
+            const isHovered = hoveredId === item.id;
 
             return (
               <button
                 key={item.id}
                 type="button"
+                onPointerEnter={(e) => {
+                  if (e.pointerType !== "touch") setHoveredId(item.id);
+                }}
+                onPointerLeave={(e) => {
+                  if (e.pointerType !== "touch") setHoveredId(null);
+                }}
+                onPointerDown={(e) => {
+                  if (e.pointerType === "touch") startTouchHover(item.id);
+                }}
+                onPointerUp={(e) => {
+                  if (e.pointerType === "touch") endTouchHover();
+                }}
+                onPointerCancel={(e) => {
+                  if (e.pointerType === "touch") endTouchHover();
+                }}
                 onClick={() => {
                   if (onSelectCategory) onSelectCategory(item.id);
-                  navigate(`/events?category=${encodeURIComponent(item.name)}`);
+                  navigate(
+                    item.eventCategory
+                      ? `/events?category=${encodeURIComponent(item.eventCategory)}`
+                      : "/events"
+                  );
                 }}
-                className={`group flex min-w-23 shrink-0 flex-col items-center justify-center rounded-2xl border bg-surface p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:min-w-25.5 sm:p-3.5 xl:min-w-0 ${
+                className={`group flex min-w-23 shrink-0 flex-col items-center justify-center rounded-2xl border bg-surface p-3 text-center transition-all duration-300 [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-md active:-translate-y-1 active:shadow-md sm:min-w-25.5 sm:p-3.5 xl:min-w-0 ${
                   isSelected
                     ? "border-primary bg-primary/5 shadow-sm ring-2 ring-primary/20"
-                    : "border-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:border-primary/40"
+                    : `border-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ${
+                        isHovered
+                          ? "border-primary/60 shadow-xl"
+                          : "[@media(hover:hover)]:hover:border-primary/40"
+                      }`
+                } ${
+                  isHovered ? "-translate-y-2 shadow-[0_12px_28px_-6px_rgba(79,70,229,0.45)]" : ""
                 } ${item.bgHover}`}
               >
                 {/* 3D-styled Vibrant Icon */}
-                <div className="flex h-12 w-12 items-center justify-center transition-transform duration-300 group-hover:scale-110 sm:h-13 sm:w-13">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center transition-transform duration-300 [@media(hover:hover)]:group-hover:scale-110 sm:h-13 sm:w-13 ${
+                    isHovered ? "scale-[1.18] drop-shadow-lg" : ""
+                  }`}
+                >
                   <Icon />
                 </div>
 
                 {/* Category Title */}
-                <span className="mt-2.5 text-xs font-semibold text-text transition-colors group-hover:text-primary sm:text-[13px]">
+                <span
+                  // Only one of text-text / text-primary is applied: both are
+                  // single-class selectors, so stacking them lets whichever comes
+                  // later in the stylesheet win regardless of this order.
+                  className={`mt-2.5 text-xs font-semibold transition-colors sm:text-[13px] ${
+                    isHovered
+                      ? "text-primary"
+                      : "text-text [@media(hover:hover)]:group-hover:text-primary"
+                  }`}
+                >
                   {item.name}
                 </span>
 
-                {/* Events Count */}
-                <span className="mt-0.5 text-[11px] font-normal text-text-secondary">
-                  {item.count}
-                </span>
+                {/* Events Count — only shown for tiles backed by real data */}
+                {item.count !== null && (
+                  <span className="mt-0.5 text-[11px] font-normal text-text-secondary">
+                    {item.count}
+                  </span>
+                )}
               </button>
             );
           })}

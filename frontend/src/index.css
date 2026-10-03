@@ -127,13 +127,28 @@ html.dark .bg-slate-200\/60 {
 
 /* Background blob gradients in Dark Mode (soft subtle glows instead of harsh white glows) */
 html.dark .from-indigo-200\/25,
-html.dark .from-indigo-200\/30 {
+html.dark .from-indigo-200\/30,
+html.dark .from-indigo-200\/40 {
     --tw-gradient-from: rgba(99, 102, 241, 0.12) !important;
 }
 
 html.dark .from-violet-100\/20,
-html.dark .from-violet-200\/20 {
+html.dark .from-violet-200\/20,
+html.dark .from-violet-200\/25,
+html.dark .from-violet-200\/30 {
     --tw-gradient-from: rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Faint white/50 gradient orbs (used on Profile, CreateEvent, NotFound) */
+html.dark .from-indigo-50\/40,
+html.dark .from-indigo-50\/50,
+html.dark .from-indigo-100\/15,
+html.dark .from-indigo-100\/20,
+html.dark .from-violet-100\/15,
+html.dark .from-amber-100\/30,
+html.dark .from-rose-100\/15,
+html.dark .from-rose-200\/25 {
+    --tw-gradient-from: rgba(148, 163, 184, 0.08) !important;
 }
 
 /* High-contrast Action Buttons (prevents buttons from disappearing in dark cards) */
@@ -306,6 +321,19 @@ html.dark .shadow-2xl {
 /* Range input accent in dark mode */
 html.dark input[type="range"] {
     accent-color: #6366F1 !important;
+}
+
+/* Soft rings around gradient icons (Profile hero, BookingCancelled badge) */
+html.dark .ring-indigo-100,
+html.dark .ring-rose-100,
+html.dark .ring-white {
+    --tw-ring-color: #1E2B45 !important;
+}
+
+/* Colored drop shadows look muddy on dark backgrounds */
+html.dark .shadow-indigo-200,
+html.dark .shadow-emerald-200 {
+    box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Table styling in Dark Mode */

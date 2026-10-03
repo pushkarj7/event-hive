@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import { ALL_EVENTS } from "../../member1/data/eventsData";
 import BookingModal from "../../member1/components/BookingModal";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 import {
   Heart,
   Calendar,
@@ -90,6 +91,7 @@ export default function Wishlist() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Link
               to="/profile"
               className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
