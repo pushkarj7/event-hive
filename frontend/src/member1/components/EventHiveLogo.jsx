@@ -1,4 +1,9 @@
-export default function EventHiveLogo({ size = 32, showText = true, className = "" }) {
+export default function EventHiveLogo({
+  size = 32,
+  showText = true,
+  lightText = false,
+  className = "",
+}) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <svg
@@ -47,10 +52,21 @@ export default function EventHiveLogo({ size = 32, showText = true, className = 
 
       {showText && (
         <div className="flex flex-col leading-none">
-          <span className="text-xl font-bold tracking-tight text-text">
-            Event <span className="text-primary">Hive</span>
+          <span
+            className={`text-xl font-bold tracking-tight ${
+              lightText ? "text-white" : "text-text"
+            }`}
+          >
+            Event{" "}
+            <span className={lightText ? "text-indigo-200" : "text-primary"}>
+              Hive
+            </span>
           </span>
-          <span className="text-[10px] font-medium tracking-widest text-text-secondary uppercase">
+          <span
+            className={`text-[10px] font-medium tracking-widest uppercase ${
+              lightText ? "text-indigo-100/80" : "text-text-secondary"
+            }`}
+          >
             Discover • Book • Experience
           </span>
         </div>
