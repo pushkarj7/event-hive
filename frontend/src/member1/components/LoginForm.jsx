@@ -61,7 +61,7 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative w-full max-w-[420px] rounded-[24px] border border-slate-200/90 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.08)] sm:p-8 font-sans"
+      className="relative w-full max-w-105 rounded-[24px] border border-slate-200/90 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.08)] sm:p-8 font-sans"
     >
       <button
         type="button"
@@ -246,7 +246,7 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:from-indigo-700 hover:to-violet-700 hover:shadow-lg disabled:opacity-60 active:scale-[0.99]"
+          className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:from-indigo-700 hover:to-violet-700 hover:shadow-lg disabled:opacity-60 active:scale-[0.99]"
         >
           {isLoading ? (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />

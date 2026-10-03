@@ -86,7 +86,7 @@ export default function Artists() {
     <div className="min-h-screen bg-background pb-16">
       {/* 1. Sleek Hero Header matching Event Hive Theme */}
       <section className="relative overflow-hidden bg-[#0A0E1A] py-14 text-white sm:py-16">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-accent/20 to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/30 via-accent/20 to-transparent opacity-80" />
         <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
         <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
 
@@ -181,13 +181,13 @@ export default function Artists() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-surface shadow-md">
           <div className="grid lg:grid-cols-12">
             {/* Visual cover */}
-            <div className="relative aspect-[16/9] lg:aspect-auto lg:col-span-6 overflow-hidden">
+            <div className="relative aspect-video lg:aspect-auto lg:col-span-6 overflow-hidden">
               <img
                 src={spotlightArtist.image}
                 alt={spotlightArtist.name}
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/30" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent lg:bg-linear-to-r lg:from-transparent lg:to-black/30" />
               <div className="absolute left-4 top-4 flex items-center gap-2">
                 <span className="flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-slate-900 shadow-sm">
                   <Flame size={13} className="fill-slate-900 text-slate-900" />
@@ -340,13 +340,13 @@ export default function Artists() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-surface shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-lg"
                 >
                   {/* Photo & Badges */}
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-100">
                     <img
                       src={artist.image}
                       alt={artist.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
                     {/* Top tags */}
                     <div className="absolute left-3 top-3 flex items-center gap-1.5">
@@ -463,7 +463,7 @@ export default function Artists() {
 
       {/* 5. Join As An Artist Section */}
       <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 p-8 sm:p-12 text-center">
+        <div className="rounded-3xl border border-primary/20 bg-linear-to-r from-primary/10 via-accent/10 to-primary/5 p-8 sm:p-12 text-center">
           <span className="inline-block rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">
             For Creators & Performers
           </span>

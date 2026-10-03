@@ -11,10 +11,10 @@ const MyBookings = () => {
   const [selectedTicketForPrint, setSelectedTicketForPrint] = useState(null);
   const confirmed = filteredBookings.filter(b => b.status === "Confirmed").length;
   return (
-    <div className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-32 h-[520px] w-[520px] rounded-full bg-gradient-to-br from-indigo-200/25 via-violet-200/15 to-transparent blur-[80px]" />
-        <div className="absolute top-[30%] right-0 h-[400px] w-[400px] rounded-full bg-gradient-to-bl from-violet-100/20 to-transparent blur-[70px]" />
+        <div className="absolute -top-32 -left-32 h-130 w-130 rounded-full bg-linear-to-br from-indigo-200/25 via-violet-200/15 to-transparent blur-[80px]" />
+        <div className="absolute top-[30%] right-0 h-100 w-100 rounded-full bg-linear-to-bl from-violet-100/20 to-transparent blur-[70px]" />
       </div>
 
       {/* Header with nav */}
@@ -29,7 +29,7 @@ const MyBookings = () => {
 
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Ticket size={16} /></span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Ticket size={16} /></span>
               <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">My Bookings</h1>
               <span className="rounded-full bg-slate-900 px-2.5 py-1 text-xs font-bold text-white">{filteredBookings.length}</span>
             </div>
@@ -64,10 +64,10 @@ const MyBookings = () => {
 
         {filteredBookings.length === 0 ? (
           <div className="mt-10 rounded-[28px] border-2 border-dashed border-slate-200 bg-white p-12 text-center shadow-sm">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 border border-slate-200"><Ticket size={22} className="text-slate-500" /></div>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-slate-100 to-slate-50 border border-slate-200"><Ticket size={22} className="text-slate-500" /></div>
             <p className="mt-4 text-base font-extrabold text-slate-900">No bookings yet</p>
             <p className="mt-1 text-sm text-slate-500">Book an event to see your tickets here — instant confirmation</p>
-            <button onClick={() => navigate("/events")} className="mt-6 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 hover:from-indigo-700 hover:to-violet-700">Explore Events</button>
+            <button onClick={() => navigate("/events")} className="mt-6 rounded-full bg-linear-to-r from-indigo-600 to-violet-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-200 hover:from-indigo-700 hover:to-violet-700">Explore Events</button>
           </div>
         ) : (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">

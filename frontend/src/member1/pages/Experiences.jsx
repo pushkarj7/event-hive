@@ -359,7 +359,7 @@ export default function Experiences() {
     <div className="min-h-screen bg-background pb-20 font-sans">
       {/* 1. Header / Hero Section */}
       <section className="relative overflow-hidden bg-[#0A0E1A] py-14 text-white sm:py-20">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-accent/20 to-transparent opacity-85" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/30 via-accent/20 to-transparent opacity-85" />
         <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
         <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
 

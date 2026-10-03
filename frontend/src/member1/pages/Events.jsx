@@ -100,9 +100,9 @@ export default function Events() {
     <div className="min-h-screen bg-background pb-16">
       {/* 1. Header Banner */}
       <section className="relative overflow-hidden bg-[#0A0E1A] py-14 text-white sm:py-16">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-accent/20 to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary/30 via-accent/20 to-transparent opacity-80" />
         <div
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/25 via-transparent to-transparent pointer-events-none"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/25 via-transparent to-transparent pointer-events-none"
         />
         <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
         <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-accent/20 blur-3xl pointer-events-none" />

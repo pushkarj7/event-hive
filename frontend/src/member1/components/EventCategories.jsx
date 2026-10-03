@@ -477,7 +477,7 @@ export default function EventCategories({ selectedCategory, onSelectCategory }) 
         {/* Categories Carousel/Row */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-3 overflow-x-auto pb-3 pt-1 scroll-smooth [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden xl:grid xl:grid-cols-11 xl:gap-2.5"
+          className="flex gap-3 overflow-x-auto pb-3 pt-1 scroll-smooth [-ms-overflow-style:none] scrollbar-none xl:grid xl:grid-cols-11 xl:gap-2.5"
         >
           {CATEGORIES_DATA.map((item) => {
             const Icon = item.icon;
@@ -491,7 +491,7 @@ export default function EventCategories({ selectedCategory, onSelectCategory }) 
                   if (onSelectCategory) onSelectCategory(item.id);
                   navigate(`/events?category=${encodeURIComponent(item.name)}`);
                 }}
-                className={`group flex min-w-[92px] shrink-0 flex-col items-center justify-center rounded-2xl border bg-surface p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:min-w-[102px] sm:p-3.5 xl:min-w-0 ${
+                className={`group flex min-w-23 shrink-0 flex-col items-center justify-center rounded-2xl border bg-surface p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:min-w-25.5 sm:p-3.5 xl:min-w-0 ${
                   isSelected
                     ? "border-primary bg-primary/5 shadow-sm ring-2 ring-primary/20"
                     : "border-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:border-primary/40"

@@ -67,7 +67,7 @@ export default function Wishlist() {
   }, [wishlistedEvents]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans">
+    <div className="min-h-screen bg-background pb-20 font-sans">
       {/* Top Bar */}
       <div className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 px-6 py-4 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
@@ -108,7 +108,7 @@ export default function Wishlist() {
 
       <div className="mx-auto max-w-6xl px-6 py-8">
         {/* Hero banner */}
-        <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-rose-900 via-indigo-950 to-slate-900 p-8 text-white shadow-lg">
+        <div className="relative overflow-hidden rounded-[24px] bg-linear-to-r from-rose-900 via-indigo-950 to-slate-900 p-8 text-white shadow-lg">
           <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-rose-500/20 blur-3xl pointer-events-none" />
           <div className="absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-indigo-500/20 blur-2xl pointer-events-none" />
 
@@ -178,13 +178,13 @@ export default function Wishlist() {
                 className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
               >
                 {/* Image & Category */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-16/10 w-full overflow-hidden bg-slate-100">
                   <img
                     src={event.image}
                     alt={event.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
                   {/* Category Pill */}
                   <span className="absolute left-3 top-3 rounded-full bg-slate-900/90 px-2.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">

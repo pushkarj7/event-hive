@@ -28,7 +28,7 @@ export default function HomeCta() {
   return (
     <section className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1E1B4B] via-[#2E1065] to-[#4338CA] px-6 py-10 shadow-2xl sm:px-10 md:py-12 lg:px-14">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-[#1E1B4B] via-[#2E1065] to-[#4338CA] px-6 py-10 shadow-2xl sm:px-10 md:py-12 lg:px-14">
           {/* Subtle Ambient Background Gradients */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-accent/30 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />

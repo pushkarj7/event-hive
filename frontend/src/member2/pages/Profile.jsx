@@ -3,27 +3,7 @@ import { useAppStore } from "../../store/EventContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import BookingModal from "../../member1/components/BookingModal";
 import { ALL_EVENTS } from "../../member1/data/eventsData";
-import {
-  CalendarDays,
-  Ticket,
-  IndianRupee,
-  LayoutDashboard,
-  Save,
-  LogOut,
-  Trash2,
-  UserRound,
-  Mail,
-  Phone,
-  Sparkles,
-  Crown,
-  ArrowUpRight,
-  Zap,
-  Heart,
-  Calendar,
-  MapPin,
-  Star,
-} from "lucide-react";
-
+import {CalendarDays,Ticket,IndianRupee,LayoutDashboard,Save,LogOut,Trash2,UserRound,Mail,Phone,Sparkles,Crown,ArrowUpRight,Zap,Heart,Calendar,MapPin,Star,} from "lucide-react";
 const Profile = () => {
   const { user, stats, bookings, wishlist, removeFromWishlist, events, updateProfile, logout } = useAppStore();
   const navigate = useNavigate();
@@ -74,19 +54,19 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-indigo-200/40 via-violet-200/30 to-transparent blur-[80px] animate-pulse" style={{ animationDuration: "6s" }} />
-        <div className="absolute -top-20 right-0 h-[400px] w-[400px] rounded-full bg-gradient-to-bl from-violet-200/30 via-indigo-100/20 to-transparent blur-[70px] animate-pulse" style={{ animationDuration: "8s" }} />
-        <div className="absolute top-[40%] left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-b from-indigo-50/50 to-transparent blur-[90px]" />
+        <div className="absolute -top-32 -left-32 h-125 w-125 rounded-full bg-linear-to-br from-indigo-200/40 via-violet-200/30 to-transparent blur-[80px] animate-pulse" style={{ animationDuration: "6s" }} />
+        <div className="absolute -top-20 right-0 h-100 w-100 rounded-full bg-linear-to-bl from-violet-200/30 via-indigo-100/20 to-transparent blur-[70px] animate-pulse" style={{ animationDuration: "8s" }} />
+        <div className="absolute top-[40%] left-1/2 h-150 w-150 -translate-x-1/2 rounded-full bg-linear-to-b from-indigo-50/50 to-transparent blur-[90px]" />
       </div>
 
       {/* Top bar */}
-      <div className="relative border-b border-slate-200/60 bg-white/70 backdrop-blur-xl px-6 py-4 sticky top-0 z-20">
+      <div className="sticky top-0 z-20 border-b border-slate-200/60 bg-white/70 backdrop-blur-xl px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Crown size={16} /></div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Crown size={16} /></div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900">My Account</h1>
             <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-semibold text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active</span>
           </div>
@@ -97,14 +77,14 @@ const Profile = () => {
       <div className="relative mx-auto max-w-6xl px-6 py-8">
         {/* Hero Header Card */}
         <div className="group relative overflow-hidden rounded-[28px] border border-white/60 bg-white/80 p-7 shadow-[0_8px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl transition hover:shadow-[0_12px_50px_rgba(79,70,229,0.12)]">
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent" />
-          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 blur-2xl opacity-60 transition group-hover:opacity-80" />
+          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-indigo-200/60 to-transparent" />
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-linear-to-br from-indigo-100 to-violet-100 blur-2xl opacity-60 transition group-hover:opacity-80" />
 
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-5">
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 opacity-30 blur-md" />
-                <div className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 text-2xl font-extrabold text-white shadow-[0_8px_24px_rgba(79,70,229,0.35)] ring-4 ring-white">
+                <div className="absolute -inset-1 rounded-full bg-linear-to-br from-indigo-400 to-violet-500 opacity-30 blur-md" />
+                <div className="relative flex h-18 w-18 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 via-indigo-500 to-violet-600 text-2xl font-extrabold text-white shadow-[0_8px_24px_rgba(79,70,229,0.35)] ring-4 ring-white">
                   {user.initial}
                 </div>
                 <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md ring-2 ring-white text-[10px]">✓</span>
@@ -112,7 +92,7 @@ const Profile = () => {
               <div>
                 <p className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-slate-900">
                   {user.name}
-                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm"><Crown size={10} /> PRO</span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-linear-to-r from-amber-400 to-orange-400 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm"><Crown size={10} /> PRO</span>
                 </p>
                 <p className="text-sm text-slate-500">{user.email || user.phone || user.role}</p>
                 <div className="mt-1.5 flex items-center gap-2">
@@ -135,7 +115,7 @@ const Profile = () => {
               <button onClick={() => navigate("/my-bookings")} className="group/btn relative overflow-hidden rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50">
                 <span className="relative flex items-center gap-1.5">My Bookings <span className="rounded-full bg-indigo-600 px-1.5 py-0.5 text-xs font-bold text-white">{bookings.length}</span></span>
               </button>
-              <button onClick={() => navigate("/create-event")} className="rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(79,70,229,0.35)] transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-[0_10px_28px_rgba(79,70,229,0.45)] hover:-translate-y-0.5 active:translate-y-0">
+              <button onClick={() => navigate("/create-event")} className="rounded-full bg-linear-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(79,70,229,0.35)] transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-[0_10px_28px_rgba(79,70,229,0.45)] hover:-translate-y-0.5 active:translate-y-0">
                 + Create Event
               </button>
             </div>
@@ -200,7 +180,7 @@ const Profile = () => {
                 { label: "Revenue", value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`, sub: "Lifetime", grad: "from-violet-500 to-purple-500", bg: "bg-violet-50", icon: IndianRupee },
               ].map((s) => (
                 <div key={s.label} className="group relative overflow-hidden rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] hover:border-slate-300">
-                  <div className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${s.grad} opacity-80`} />
+                  <div className={`absolute inset-x-0 top-0 h-0.75 bg-linear-to-r ${s.grad} opacity-80`} />
                   <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${s.bg} transition group-hover:scale-110`}>
                     <s.icon size={16} className="text-slate-700" />
                   </div>
@@ -214,7 +194,7 @@ const Profile = () => {
             <div className="mt-6 grid gap-6 lg:grid-cols-5">
               {/* Personal Info */}
               <div className="group relative overflow-hidden rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-[0_12px_32px_rgba(15,23,42,0.06)] lg:col-span-3">
-                <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-50 to-violet-50 blur-xl opacity-60" />
+                <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-linear-to-br from-indigo-50 to-violet-50 blur-xl opacity-60" />
                 <div className="relative flex items-center justify-between">
                   <h3 className="flex items-center gap-2 text-base font-extrabold text-slate-900"><Sparkles size={16} className="text-indigo-600" /> Personal Information</h3>
                   {!editing ? (
@@ -237,8 +217,8 @@ const Profile = () => {
                         <ArrowUpRight size={14} className="text-slate-300 group-hover/row:text-slate-500 transition" />
                       </div>
                     ))}
-                    <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50 px-4 py-3.5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Crown size={14} /></span>
+                    <div className="flex items-center gap-3 rounded-2xl border border-indigo-100 bg-linear-to-r from-indigo-50 to-violet-50 px-4 py-3.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-md"><Crown size={14} /></span>
                       <div><p className="text-xs font-semibold text-indigo-700">Role</p><p className="text-sm font-extrabold text-indigo-900">{user.role}</p></div>
                       <span className="ml-auto rounded-full bg-white px-2.5 py-1 text-xs font-bold text-indigo-700 shadow-sm border border-indigo-100">Verified</span>
                     </div>
@@ -255,8 +235,8 @@ const Profile = () => {
 
               <div className="space-y-4 lg:col-span-2">
                 {/* Your Dashboard */}
-                <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-[1px] shadow-[0_12px_32px_rgba(15,23,42,0.2)]">
-                  <div className="rounded-[23px] bg-gradient-to-br from-slate-900 to-indigo-950 p-6 text-white relative overflow-hidden">
+                <div className="relative overflow-hidden rounded-[24px] bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 p-px shadow-[0_12px_32px_rgba(15,23,42,0.2)]">
+                  <div className="rounded-[23px] bg-linear-to-br from-slate-900 to-indigo-950 p-6 text-white relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute -left-8 bottom-0 h-24 w-24 rounded-full bg-indigo-500/20 blur-xl" />
                     <div className="relative">
@@ -341,13 +321,13 @@ const Profile = () => {
                     key={event.id}
                     className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
                   >
-                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                    <div className="relative aspect-16/10 w-full overflow-hidden bg-slate-100">
                       <img
                         src={event.image}
                         alt={event.title}
                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                       <span className="absolute left-3 top-3 rounded-full bg-slate-900/90 px-2.5 py-0.5 text-[10px] font-bold text-white">
                         {event.category || "Live Event"}
                       </span>
@@ -440,7 +420,7 @@ const Profile = () => {
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {bookings.slice(0, 8).map((b) => (
                   <div key={b.id} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300">
-                    <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-indigo-500 to-violet-500 opacity-0 transition group-hover:opacity-100" />
+                    <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-indigo-500 to-violet-500 opacity-0 transition group-hover:opacity-100" />
                     <div className="flex gap-3">
                       <img src={b.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87"} alt={b.event} className="h-14 w-14 rounded-xl object-cover shadow-sm" />
                       <div className="min-w-0 flex-1">

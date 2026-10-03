@@ -7,7 +7,7 @@ export default function ToastContainer() {
   if (!toasts || toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-5 right-5 z-[99999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 sm:px-0">
+    <div className="fixed top-5 right-5 z-99999 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 sm:px-0">
       {toasts.map((t) => {
         const isSuccess = t.type === "success";
         const isWishlist = t.type === "wishlist";

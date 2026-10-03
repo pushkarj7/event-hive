@@ -4,7 +4,7 @@ import EventHiveLogo from "../../member1/components/EventHiveLogo";
 
 const Login = () => {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans">
+    <div className="min-h-screen bg-background font-sans">
       {/* subtle gradient blobs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-indigo-200/30 blur-[80px]" />
@@ -14,7 +14,7 @@ const Login = () => {
 
       <div className="relative flex min-h-screen">
         {/* Left — branding (desktop only) */}
-        <div className="hidden w-[46%] flex-col justify-between bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 p-12 text-white lg:flex relative overflow-hidden shadow-2xl">
+        <div className="hidden w-[46%] flex-col justify-between bg-linear-to-br from-indigo-600 via-indigo-700 to-violet-700 p-12 text-white lg:flex relative overflow-hidden shadow-2xl">
           {/* Ambient background decorative glow */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-violet-900/40 blur-3xl" />
