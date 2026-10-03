@@ -1,12 +1,15 @@
 import Navbar from "../components/Navbar";
-function MainLayout({children}){
-    return(
-        <div className="min-h-screen bg-slate-50">
-            <Navbar />
-            <main>
-                {children}
-            </main>
-        </div>
-    );
+import Footer from "../components/Footer";
+import{Outlet} from "react-router-dom";
+
+ export default function MainLayout({ children }) {
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <Navbar />
+      <main className="flex-1">
+        {children || <Outlet />}
+      </main>
+      <Footer />
+    </div>
+  );
 }
-export default MainLayout;
