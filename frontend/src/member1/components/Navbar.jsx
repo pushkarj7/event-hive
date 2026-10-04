@@ -129,7 +129,7 @@ function Navbar() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
                   {user?.initial || user?.name?.[0]?.toUpperCase() || "U"}
                 </span>
-                <span className="max-w-[120px] truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                <span className="max-w-30 truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
                   {user?.name || "User"}
                 </span>
                 <ChevronDown

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  Star,
-  MapPin,
+import { Star,MapPin,
   Calendar,
   ShieldCheck,
   CheckCircle,
