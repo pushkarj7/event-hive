@@ -17,9 +17,9 @@ function MusicIcon() {
     <svg className="h-10 w-10 drop-shadow-md" viewBox="0 0 48 48" fill="none">
       <defs>
         <linearGradient id="musicGrad" x1="8" y1="6" x2="40" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#818CF8" />
-          <stop offset="0.5" stopColor="#4F46E5" />
-          <stop offset="1" stopColor="#7C3AED" />
+          <stop stopColor="#A08BB0" />
+          <stop offset="0.5" stopColor="#6A5A7A" />
+          <stop offset="1" stopColor="#87B6B4" />
         </linearGradient>
         <filter id="musicGlow" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse">
           <feGaussianBlur stdDeviation="2" result="blur" />
@@ -30,9 +30,9 @@ function MusicIcon() {
         d="M18 36c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6c1.32 0 2.535.426 3.522 1.147L16 12l22-5v19.147C36.98 25.426 35.765 25 34.445 25c-3.314 0-6 2.686-6 6s2.686 6 6 6 6-2.686 6-6V6L18 11.5v24.5z"
         fill="url(#musicGrad)"
       />
-      <circle cx="12" cy="36" r="4" fill="#C7D2FE" opacity="0.6" />
-      <circle cx="34" cy="31" r="4" fill="#DDD6FE" opacity="0.6" />
-      <path d="M18 11.5L40 6v4L18 15.5v-4z" fill="#A5B4FC" />
+      <circle cx="12" cy="36" r="4" fill="#D4C8DA" opacity="0.6" />
+      <circle cx="34" cy="31" r="4" fill="#C2EEEA" opacity="0.6" />
+      <path d="M18 11.5L40 6v4L18 15.5v-4z" fill="#B9AAC4" />
     </svg>
   );
 }
@@ -302,7 +302,7 @@ function TechBusinessIcon() {
       <defs>
         <linearGradient id="screenGrad" x1="11" y1="12" x2="37" y2="30" gradientUnits="userSpaceOnUse">
           <stop stopColor="#38BDF8" />
-          <stop offset="0.5" stopColor="#4F46E5" />
+          <stop offset="0.5" stopColor="#6A5A7A" />
           <stop offset="1" stopColor="#0F172A" />
         </linearGradient>
         <linearGradient id="baseGrad" x1="6" y1="33" x2="42" y2="40" gradientUnits="userSpaceOnUse">
@@ -332,9 +332,9 @@ function MoreIcon() {
       <defs>
         <radialGradient id="balloonGrad" cx="35%" cy="30%" r="65%">
           <stop stopColor="#F472B6" />
-          <stop offset="0.4" stopColor="#818CF8" />
+          <stop offset="0.4" stopColor="#A08BB0" />
           <stop offset="0.8" stopColor="#38BDF8" />
-          <stop offset="1" stopColor="#6366F1" />
+          <stop offset="1" stopColor="#837895" />
         </radialGradient>
       </defs>
       {/* Hot air balloon envelope */}

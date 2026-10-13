@@ -17,15 +17,15 @@ export default function EventHiveLogo({
       >
         <defs>
           <linearGradient id="logo-top" x1="60" y1="12" x2="60" y2="58" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#818CF8" />
-            <stop offset="100%" stopColor="#6366F1" />
+            <stop offset="0%" stopColor="#A08BB0" />
+            <stop offset="100%" stopColor="#837895" />
           </linearGradient>
           <linearGradient id="logo-left" x1="16" y1="36" x2="60" y2="108" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#4F46E5" />
-            <stop offset="100%" stopColor="#3730A3" />
+            <stop offset="0%" stopColor="#6A5A7A" />
+            <stop offset="100%" stopColor="#514061" />
           </linearGradient>
           <linearGradient id="logo-right" x1="104" y1="36" x2="60" y2="108" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#7C3AED" />
+            <stop offset="0%" stopColor="#87B6B4" />
             <stop offset="100%" stopColor="#5B21B6" />
           </linearGradient>
           <linearGradient id="logo-inner" x1="40" y1="34" x2="80" y2="86" gradientUnits="userSpaceOnUse">
@@ -46,7 +46,7 @@ export default function EventHiveLogo({
         {/* "H" Icon Graphic */}
         <path
           d="M49 56 L55 56 L55 61 L65 61 L65 56 L71 56 L71 70 L65 70 L65 65 L55 65 L55 70 L49 70 Z"
-          fill="#4F46E5"
+          fill="#6A5A7A"
         />
       </svg>
 

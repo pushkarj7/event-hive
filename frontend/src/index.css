@@ -1,17 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-    /* color */
-    --color-primary: #4F46E5;
-    --color-primary-dark: #3730A3;
-    --color-accent: #7C3AED;
-    --color-background: #F8FAFC;
+    /* color — Event Hive palette: plum #341234, mauve #837895, teal #87b6b4, sage #a6c9b0, cream #f4ebd5 */
+    --color-primary: #6A5A7A;
+    --color-primary-dark: #514061;
+    --color-accent: #87B6B4;
+    --color-background: #F4EBD5;
     --color-surface: #FFFFFF;
-    --color-text: #0F172A;
-    --color-text-secondary: #64748B;
-    --color-border: #E2E8F0;
-    --color-success: #10B981;
+    --color-text: #271F33;
+    --color-text-secondary: #756A82;
+    --color-border: #DDD6E3;
+    --color-success: #6F9C78;
     --color-error: #EF4444;
+
+    /* remap core hues to the palette (plum = indigo, teal = violet, sage = emerald) */
+    --color-indigo-50: #F2EDF4;
+    --color-indigo-100: #E9E1EC;
+    --color-indigo-200: #D4C8DA;
+    --color-indigo-300: #B9AAC4;
+    --color-indigo-400: #A08BB0;
+    --color-indigo-500: #837895;
+    --color-indigo-600: #6A5A7A;
+    --color-indigo-700: #514061;
+    --color-indigo-800: #3A2A49;
+    --color-indigo-900: #341234;
+    --color-indigo-950: #240C24;
+
+    --color-violet-50: #F0F7F6;
+    --color-violet-100: #DDEEEA;
+    --color-violet-200: #C2EEEA;
+    --color-violet-300: #A3CDC7;
+    --color-violet-400: #87B6B4;
+    --color-violet-500: #6BA39F;
+    --color-violet-600: #558783;
+    --color-violet-700: #456C69;
+    --color-violet-800: #385754;
+    --color-violet-900: #2C4442;
+    --color-violet-950: #1C2B2A;
+
+    --color-emerald-50: #F3F8F1;
+    --color-emerald-100: #E5F0E2;
+    --color-emerald-200: #CFE9D2;
+    --color-emerald-300: #B6D9AE;
+    --color-emerald-400: #A6C9B0;
+    --color-emerald-500: #8BB894;
+    --color-emerald-600: #6F9C78;
+    --color-emerald-700: #587D61;
+    --color-emerald-800: #47644C;
+    --color-emerald-900: #395050;
+    --color-emerald-950: #243533;
+
+    --color-teal-500: #87B6B4;
+    --color-teal-600: #6BA39F;
+
+    --color-purple-500: #837895;
+    --color-purple-300: #B9AAC4;
 
     /* Radius */
     --radius-sm: 6px;
@@ -44,35 +87,35 @@ body {
    Modern, Rich Dark Mode Theme System
    ======================================================== */
 html.dark {
-    --color-background: #0B0F19;
-    --color-surface: #121927;
-    --color-text: #F8FAFC;
-    --color-text-secondary: #94A3B8;
-    --color-border: #1E2B45;
-    --color-primary: #6366F1;
-    --color-primary-dark: #4F46E5;
-    --color-accent: #8B5CF6;
+    --color-background: #1C0F1C;
+    --color-surface: #2A1A2B;
+    --color-text: #F4EBD5;
+    --color-text-secondary: #B3A8BD;
+    --color-border: #3D2A3D;
+    --color-primary: #B9AAC4;
+    --color-primary-dark: #A08BB0;
+    --color-accent: #87B6B4;
     color-scheme: dark;
 }
 
 html.dark body {
-    background-color: #0B0F19;
-    color: #F8FAFC;
+    background-color: #1C0F1C;
+    color: #F4EBD5;
 }
 
 /* Core surfaces & containers */
 html.dark .bg-surface,
 html.dark .bg-surface\/95,
 html.dark .bg-surface\/90 {
-    background-color: #121927 !important;
+    background-color: #2A1A2B !important;
 }
 
 html.dark .bg-background {
-    background-color: #0B0F19 !important;
+    background-color: #1C0F1C !important;
 }
 
 html.dark .bg-white:not(.dark-preserve-white) {
-    background-color: #121927 !important;
+    background-color: #2A1A2B !important;
 }
 
 /* Translucent frosted glass headers & panels in Dark Mode */
@@ -84,8 +127,8 @@ html.dark .bg-white\/60 {
     background-color: rgba(18, 25, 39, 0.88) !important;
 }
 
-html.dark .bg-\[\#F8FAFC\] {
-    background-color: #0B0F19 !important;
+html.dark .bg-\[\#F4EBD5\] {
+    background-color: #1C0F1C !important;
 }
 
 /* Borders with clear subtle contrast */
@@ -100,13 +143,13 @@ html.dark .border-white\/60,
 html.dark .border-white\/20,
 html.dark .border-white\/15,
 html.dark .border-white\/10 {
-    border-color: #1E2B45 !important;
+    border-color: #3D2A3D !important;
 }
 
 /* Secondary & inner surfaces */
 html.dark .bg-slate-50,
 html.dark .bg-slate-100 {
-    background-color: #172134 !important;
+    background-color: #241424 !important;
 }
 
 html.dark .bg-slate-50\/50,
@@ -118,11 +161,11 @@ html.dark .bg-slate-50\/80 {
 
 html.dark .hover\:bg-slate-50:hover,
 html.dark .hover\:bg-slate-100:hover {
-    background-color: #1E2A42 !important;
+    background-color: #31202F !important;
 }
 
 html.dark .bg-slate-200\/60 {
-    background-color: #182337 !important;
+    background-color: #251625 !important;
 }
 
 /* Background blob gradients in Dark Mode (soft subtle glows instead of harsh white glows) */
@@ -153,40 +196,40 @@ html.dark .from-rose-200\/25 {
 
 /* High-contrast Action Buttons (prevents buttons from disappearing in dark cards) */
 html.dark .bg-slate-900:not(.dark-preserve-dark) {
-    background-color: #222E46 !important;
-    border: 1px solid #36486D !important;
-    color: #F8FAFC !important;
+    background-color: #3A2439 !important;
+    border: 1px solid #4E3450 !important;
+    color: #F4EBD5 !important;
 }
 
 html.dark .hover\:bg-black:hover,
 html.dark .hover\:bg-slate-800:hover {
-    background-color: #2D3D5D !important;
+    background-color: #452C42 !important;
 }
 
 /* Form Inputs, Textareas, Selects & Options */
 html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 html.dark textarea,
 html.dark select {
-    background-color: #151F33 !important;
-    color: #F8FAFC !important;
-    border-color: #253554 !important;
+    background-color: #221322 !important;
+    color: #F4EBD5 !important;
+    border-color: #3D2A3D !important;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-    color: #64748B !important;
+    color: #8A7F94 !important;
 }
 
 html.dark input:focus,
 html.dark textarea:focus,
 html.dark select:focus {
-    border-color: #6366F1 !important;
+    border-color: #B9AAC4 !important;
     outline: none !important;
 }
 
 html.dark select option {
-    background-color: #121927 !important;
-    color: #F8FAFC !important;
+    background-color: #2A1A2B !important;
+    color: #F4EBD5 !important;
 }
 
 /* ========================================================
@@ -268,7 +311,7 @@ html.dark .text-purple-600 {
 
 /* Text Hierarchy */
 html.dark .text-slate-900 {
-    color: #F8FAFC !important;
+    color: #F4EBD5 !important;
 }
 
 html.dark .text-slate-800 {
@@ -281,26 +324,26 @@ html.dark .text-slate-700 {
 
 html.dark .text-slate-600,
 html.dark .text-slate-500 {
-    color: #94A3B8 !important;
+    color: #B3A8BD !important;
 }
 
 html.dark .text-slate-400 {
-    color: #64748B !important;
+    color: #8A7F94 !important;
 }
 
 /* Preserved white elements like scanned QR code cards */
 html.dark .dark-preserve-white {
     background-color: #FFFFFF !important;
-    color: #0F172A !important;
+    color: #271F33 !important;
 }
 
 html.dark .dark-preserve-white * {
-    color: #0F172A;
+    color: #271F33;
 }
 
 /* Sidebar Promo card in Dark Mode */
 html.dark aside .bg-indigo-100 {
-    background: linear-gradient(135deg, #151F33 0%, #1E1B4B 100%) !important;
+    background: linear-gradient(135deg, #221322 0%, #1E1B4B 100%) !important;
     border: 1px solid #312E81 !important;
 }
 
@@ -320,14 +363,14 @@ html.dark .shadow-2xl {
 
 /* Range input accent in dark mode */
 html.dark input[type="range"] {
-    accent-color: #6366F1 !important;
+    accent-color: #B9AAC4 !important;
 }
 
 /* Soft rings around gradient icons (Profile hero, BookingCancelled badge) */
 html.dark .ring-indigo-100,
 html.dark .ring-rose-100,
 html.dark .ring-white {
-    --tw-ring-color: #1E2B45 !important;
+    --tw-ring-color: #3D2A3D !important;
 }
 
 /* Colored drop shadows look muddy on dark backgrounds */
@@ -338,15 +381,15 @@ html.dark .shadow-emerald-200 {
 
 /* Table styling in Dark Mode */
 html.dark table thead tr {
-    border-color: #1E2B45 !important;
+    border-color: #3D2A3D !important;
 }
 
 html.dark table tbody tr {
-    border-color: #182337 !important;
+    border-color: #251625 !important;
 }
 
 html.dark table tbody tr:hover {
-    background-color: #172134 !important;
+    background-color: #241424 !important;
 }
 
 /* Print Styles for E-Ticket */
