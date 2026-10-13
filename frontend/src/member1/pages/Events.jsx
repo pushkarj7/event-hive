@@ -155,12 +155,11 @@ export default function Events() {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full cursor-pointer bg-transparent text-sm outline-none text-text"
                 >
-                  <option value="all">All Categories</option>
-                  <option value="Music">Music</option>
-                  <option value="Tech">Tech</option>
-                  <option value="Food">Food</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Arts">Arts</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={cat.id === "all" ? "all" : cat.label}>
+                      {cat.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

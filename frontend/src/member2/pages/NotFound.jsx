@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Compass, Home, Search, ArrowRight, Sparkles, MapPin, CalendarDays, Ghost } from "lucide-react";
 import EventHiveLogo from "../../member1/components/EventHiveLogo";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -21,12 +22,15 @@ const NotFound = () => {
         >
           <EventHiveLogo size={36} showText={true} />
         </button>
-        <button
-          onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition"
-        >
-          <Home size={15} /> Back to Home
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition"
+          >
+            <Home size={15} /> Back to Home
+          </button>
+        </div>
       </div>
 
       {/* center */}

@@ -119,7 +119,7 @@ export const ALL_EVENTS = [
   {
     id: "evt-6",
     title: "Standup Comedy Special with Zakir",
-    category: "Arts",
+    category: "Comedy",
     badge: "Trending #1",
     date: "2026-11-22",
     formattedDate: "22 Nov 2026",
@@ -257,7 +257,7 @@ export const ALL_EVENTS = [
   {
     id: "evt-12",
     title: "Harsh Gujral - Jo Bolta Hai Wohi Hota Hai",
-    category: "Arts",
+    category: "Comedy",
     badge: "Almost Full",
     date: "2026-12-12",
     formattedDate: "12 Dec 2026",
@@ -280,7 +280,7 @@ export const ALL_EVENTS = [
   {
     id: "evt-13",
     title: "Anoushka Shankar - Classical Sitar & Symphony",
-    category: "Arts",
+    category: "Theatre",
     badge: "Exclusive",
     date: "2026-12-18",
     formattedDate: "18 Dec 2026",
@@ -326,7 +326,7 @@ export const ALL_EVENTS = [
   {
     id: "evt-15",
     title: "Mughal-E-Azam The Musical",
-    category: "Arts",
+    category: "Theatre",
     badge: "Award Winner",
     date: "2027-01-16",
     formattedDate: "16 Jan 2027",
@@ -348,15 +348,23 @@ export const ALL_EVENTS = [
   },
 ];
 
+// Counts are derived from ALL_EVENTS so the sidebar can never drift from the data.
 export const CATEGORIES = [
-  { id: "all", label: "All", count: 15 },
-  { id: "Music", label: "Music", count: 7 },
-  { id: "Tech", label: "Tech", count: 2 },
-  { id: "Food", label: "Food", count: 1 },
-  { id: "Sports", label: "Sports", count: 1 },
-  { id: "Arts", label: "Arts", count: 5},
-  { id: "Others", label: "Others", count: 0 },
-];
+  { id: "all", label: "All" },
+  { id: "Music", label: "Music" },
+  { id: "Comedy", label: "Comedy" },
+  { id: "Theatre", label: "Theatre" },
+  { id: "Sports", label: "Sports" },
+  { id: "Tech", label: "Tech" },
+  { id: "Food", label: "Food" },
+  { id: "Arts", label: "Arts" },
+].map((cat) => ({
+  ...cat,
+  count:
+    cat.id === "all"
+      ? ALL_EVENTS.length
+      : ALL_EVENTS.filter((e) => e.category === cat.id).length,
+}));
 
 export const CITIES = [
   "All Locations",

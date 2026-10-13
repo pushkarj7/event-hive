@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 import { XCircle, CalendarDays, MapPin, Ticket, ArrowRight, Sparkles, ShieldCheck, RotateCcw, Search, Home, LayoutDashboard } from "lucide-react";
 
 const BookingCancelled = () => {
@@ -27,6 +28,7 @@ const BookingCancelled = () => {
           <span className="text-sm font-extrabold tracking-tight text-slate-900">Event Hive</span>
         </button>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <button onClick={() => navigate("/my-bookings")} className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">
             <Ticket size={14} /> My Bookings
           </button>

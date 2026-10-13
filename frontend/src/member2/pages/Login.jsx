@@ -1,6 +1,7 @@
 import LoginForm from "../../member1/components/LoginForm";
 import { Link } from "react-router-dom";
 import EventHiveLogo from "../../member1/components/EventHiveLogo";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 
 const Login = () => {
   return (
@@ -10,6 +11,11 @@ const Login = () => {
         <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-indigo-200/30 blur-[80px]" />
         <div className="absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-violet-200/30 blur-[80px]" />
         <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-100/40 blur-[80px]" />
+      </div>
+
+      {/* Theme toggle */}
+      <div className="absolute right-5 top-5 z-20">
+        <ThemeToggle />
       </div>
 
       <div className="relative flex min-h-screen">

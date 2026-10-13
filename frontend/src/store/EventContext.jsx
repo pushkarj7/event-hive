@@ -107,6 +107,34 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  // Sidebar visibility — shared by Sidebar and Topbar so either can toggle it.
+  // Desktop collapses to an icon rail; mobile/tablet slides it in as a drawer.
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem("eh_sidebar");
+      return saved === null ? true : saved === "true";
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("eh_sidebar", String(sidebarOpen));
+    } catch {
+      /* storage unavailable — keep in-memory state only */
+    }
+  }, [sidebarOpen]);
+
+  // Close the drawer when the viewport grows to desktop so the layout never
+  // keeps an off-canvas sidebar that the desktop grid does not account for.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = (e) => e.matches && setSidebarOpen(true);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   const [weekly] = useState(defaultWeekly);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -118,8 +146,19 @@ export const AppProvider = ({ children }) => {
   const notifications = 3;
 
   const login = (payload) => {
-    const name = payload.name || payload.email?.split("@")[0] || payload.phone || "Vivek Singh";
-    const u = { name: name.charAt(0).toUpperCase() + name.slice(1), role: "Event Organizer", initial: name.charAt(0).toUpperCase(), email: payload.email || "", phone: payload.phone || "" };
+    // Prefer a real name, then the email local-part. A raw phone number is
+    // deliberately not used as a name — 10 digits overflow every name slot.
+    const explicit = (payload.name || "").trim();
+    const fromEmail = payload.email?.split("@")[0]?.trim() || "";
+    const raw = explicit || fromEmail || "Event Organizer";
+    const name = raw.charAt(0).toUpperCase() + raw.slice(1);
+    const u = {
+      name,
+      role: "Event Organizer",
+      initial: name.charAt(0).toUpperCase(),
+      email: payload.email || "",
+      phone: payload.phone || "",
+    };
     setAuthUser(u);
     localStorage.setItem("eh_auth", JSON.stringify(u));
     showToast(`Welcome back, ${u.name}! Logged in successfully ✓`, "success");
@@ -166,10 +205,23 @@ export const AppProvider = ({ children }) => {
   };
 
   const addEvent = (ev) => {
-    const newEv = { id: Date.now(), status: "Upcoming", rating: 4.5, ...ev };
+    // createdByUser separates organizer-created events from the seeded demo
+    // catalogue so "My Events" can show only what this user actually made.
+    const newEv = {
+      id: Date.now(),
+      status: "Upcoming",
+      rating: 4.5,
+      formattedDate: ev.date || "Upcoming",
+      city: (ev.location || "").split(",").pop()?.trim() || "India",
+      createdByUser: true,
+      ...ev,
+    };
     setEvents((p) => [newEv, ...p]);
     return newEv;
   };
+
+  // Only events this organizer created — never the seeded ALL_EVENTS catalogue.
+  const myEvents = events.filter((e) => e.createdByUser);
 
   const addBooking = (bookingOrEventId, opts = {}) => {
     let nb;
@@ -255,7 +307,8 @@ export const AppProvider = ({ children }) => {
     <EventContext.Provider value={{
       events, bookings: realBookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
       theme, toggleTheme, toasts, showToast, removeToast,
-      weekly, searchQuery, setSearchQuery, addEvent, addBooking, cancelBooking,
+      sidebarOpen, setSidebarOpen, toggleSidebar: () => setSidebarOpen((p) => !p),
+      weekly, searchQuery, setSearchQuery, addEvent, myEvents, addBooking, cancelBooking,
       updateProfile, user, authUser, isAuthenticated, login, logout, notifications,
       stats, filteredEvents, filteredBookings
     }}>

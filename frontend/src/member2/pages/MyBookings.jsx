@@ -3,6 +3,7 @@ import { useAppStore } from "../../store/EventContext";
 import { useNavigate } from "react-router-dom";
 import BookingCard from "../../member1/components/BookingCard";
 import TicketModal from "../../member1/components/TicketModal";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 import { Ticket, Search, Sparkles, TrendingUp, CalendarDays, UserRound, LayoutDashboard, ArrowLeft } from "lucide-react";
 
 const MyBookings = () => {
@@ -25,6 +26,7 @@ const MyBookings = () => {
             <button onClick={() => navigate("/profile")} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><UserRound size={14} /> Profile</button>
             <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-md hover:bg-black"><LayoutDashboard size={14} /> Dashboard</button>
             <button onClick={() => navigate("/events")} className="ml-auto rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">Browse Events</button>
+            <ThemeToggle />
           </div>
 
           <div className="flex flex-col gap-1">

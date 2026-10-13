@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import { ArrowLeft, Sparkles, MapPin, CalendarDays, Tag, IndianRupee, Image, FileText, Check, LayoutDashboard, UserRound, Home } from "lucide-react";
 import { CATEGORIES_DATA } from "../../member1/components/EventCategories";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 
 const CreateEvent = () => {
   const { addEvent } = useAppStore();
@@ -35,6 +36,7 @@ const CreateEvent = () => {
             <ArrowLeft size={16} /> Back
           </button>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <button onClick={() => navigate("/")} className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"><Home size={14} /> Home</button>
             <button onClick={() => navigate("/profile")} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><UserRound size={14} /> Profile</button>
             <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-md hover:bg-black"><LayoutDashboard size={14} /> Dashboard</button>

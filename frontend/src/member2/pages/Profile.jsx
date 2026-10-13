@@ -3,6 +3,7 @@ import { useAppStore } from "../../store/EventContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import BookingModal from "../../member1/components/BookingModal";
 import { ALL_EVENTS } from "../../member1/data/eventsData";
+import ThemeToggle from "../../member1/components/ThemeToggle";
 import {CalendarDays,Ticket,IndianRupee,LayoutDashboard,Save,LogOut,Trash2,UserRound,Mail,Phone,Sparkles,Crown,ArrowUpRight,Zap,Heart,Calendar,MapPin,Star,} from "lucide-react";
 const Profile = () => {
   const { user, stats, bookings, wishlist, removeFromWishlist, events, updateProfile, logout } = useAppStore();
@@ -70,7 +71,10 @@ const Profile = () => {
             <h1 className="text-xl font-extrabold tracking-tight text-slate-900">My Account</h1>
             <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-semibold text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active</span>
           </div>
-          <button onClick={() => navigate("/")} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 hover:shadow">← Home</button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button onClick={() => navigate("/")} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 hover:shadow">← Home</button>
+          </div>
         </div>
       </div>
 
