@@ -30,7 +30,7 @@ function EventDetails(){
           </div>
           <p className="mt-4 text-2xl font-bold text-indigo-600">₹{event.price}</p>
           <p className="mt-4 text-sm leading-6 text-slate-600">{event.description || "Experience an unforgettable evening filled with amazing performances and great moments."}</p>
-          <button onClick={() => navigate(`/booking/${event.id}`)} className="mt-6 w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 hover:from-indigo-700 hover:to-violet-700 sm:w-auto sm:px-10">Book Now — ₹{event.price}</button>
+          <button onClick={() => navigate(`/booking/${event.id}`)} className="mt-6 w-full rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 hover:from-indigo-700 hover:to-violet-700 sm:w-auto sm:px-10">Book Now — ₹{event.price}</button>
           <button onClick={() => navigate("/events")} className="mt-3 w-full rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:ml-3 sm:w-auto sm:px-8">Explore More</button>
         </div>
       </div>

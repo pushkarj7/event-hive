@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo ,useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Search,
@@ -10,7 +10,7 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
-import { ALL_EVENTS, CATEGORIES, CITIES } from "../data/eventsData";
+import {CATEGORIES,CITIES } from "../data/eventsData";
 import EventListingCard from "../components/EventListingCard";
 import EventFilter from "../components/EventFilter";
 import BookingModal from "../components/BookingModal";
@@ -44,7 +44,58 @@ export default function Events() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const { wishlist, toggleWishlist } = useAppStore();
   const [selectedEventForBooking, setSelectedEventForBooking] = useState(null);
-
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError ,setApiError] = useState("");
+  useEffect(()=> {
+   const fetchEvents = async () => {
+     try{
+      setLoading(true);
+      setApiError("");
+      const response = await fetch(
+        "http://localhost:5000/api/events"
+      );
+      if (!response.ok){
+        throw new Error(`Request failed:${response.status}`);
+      }
+      const result = await response.json();
+      if (!result.success || !Array.isArray(result.data)){
+        throw new Error("Invalid events API response");
+      }
+      const formattedEvents = result.data.map((event)=>{
+       const eventDate = new Date(event.date);
+       const hasValidDate = !Number.isNaN(eventDate.getTime());
+       return{
+        ...event,
+        id: String(event._id),
+        city: event.city || event.location || "",
+        price: Number(event.price),
+        image: event.image || "",
+        formattedDate: hasValidDate
+        ? eventDate.toLocaleDateString("en-IN",{
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+        :"Date TBA",
+        time: hasValidDate
+        ? eventDate.toLocaleTimeString("en-IN",{
+          hour:"2-digit",
+          minute:"2-digit",
+        })
+        :"",
+       };
+      });
+      setEvents(formattedEvents);
+     }catch(error){
+      console.error("Fetch events error:",error);
+      setApiError(error.message || "Unable to load events");
+     }finally{
+      setLoading(false);
+     }
+   };
+   fetchEvents();
+  },[]);
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedCategory("all");
@@ -55,7 +106,7 @@ export default function Events() {
   };
 
   const filteredEvents = useMemo(() => {
-    return ALL_EVENTS.filter((event) => {
+    return events.filter((event) => {
       // 1. Search Query filter
       if (searchQuery.trim() !== "") {
         const query = searchQuery.toLowerCase();
@@ -94,7 +145,7 @@ export default function Events() {
       if (sortBy === "rating") return b.rating - a.rating;
       return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
     });
-  }, [searchQuery, selectedCategory, selectedCity, priceRange, sortBy]);
+  }, [ events,searchQuery, selectedCategory, selectedCity, priceRange, sortBy]);
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -332,7 +383,22 @@ export default function Events() {
             </div>
 
             {/* Event List / Grid */}
-            {filteredEvents.length === 0 ? (
+            {loading ?(
+             <div className="rounded-2xl bg-surface p-12 text-center text-text">
+              Loading events...
+             </div>):apiError?(
+              <div  className="rounded-2xl bg-surface p-12 text-center text-red-500">
+                <p>Unable to load events.</p>
+                <p className="mt-2 text-sm">{apiError}</p>
+                <button 
+                 type="button"
+                 onClick={()=>window.location.reload()}
+                 className="mt-4 rounded-xl bg-primary px-5 py-2 text-white"
+                >
+                  Retry
+                </button>
+              </div>
+             ) : filteredEvents.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-surface p-12 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                   <Search size={24} />
