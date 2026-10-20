@@ -1,4 +1,4 @@
-import  {uploadEventImage,deleteEventImage} from "../services/imagekitService";
+import { uploadEventImage, deleteEventImage } from "../services/imagekitService.js";
 export const uploadEventImageController = async(req,res) => {
   let uploadedImage;   
   try{

@@ -1,8 +1,11 @@
 import express from "express";
-import {
-  createEvent,getAllEvents
-} from "../controllers/eventController.js";
+import { createEvent,getAllEvents } from "../controllers/eventController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { requireOrganizer } from "../middlewares/requireOrganizerMiddleware.js";
+import { uploadSingleEventImage } from "../middlewares/upload.js";
+import { uploadEventImageController } from "../controllers/uploadController.js";
 const router = express.Router();
 router.get("/",getAllEvents);
-router.post("/",createEvent);
+router.post("/image",authMiddleware,requireOrganizer,uploadSingleEventImage,uploadEventImageController);
+router.post("/",authMiddleware,requireOrganizer,createEvent);
 export default router;
