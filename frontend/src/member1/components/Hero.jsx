@@ -8,9 +8,10 @@ import {
   Users,
 } from "lucide-react";
 import BookingModal from "./BookingModal";
+import { useAppStore } from "../../store/EventContext";
 
-const featuredEvent = {
-  id: 1,
+const fallbackEvent = {
+  id: "default-1",
   title: "EDM Night 2026",
   category: "Music",
   date: "25 October 2026",
@@ -32,9 +33,32 @@ const featuredEvent = {
 };
 
 function Hero() {
-  const [activeImage, setActiveImage] = useState(featuredEvent.image);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { events, wishlist, toggleWishlist } = useAppStore();
+
+  const live = events && events.length > 0 ? events[0] : null;
+  const featuredEvent = live
+    ? {
+        ...live,
+        venue: live.location || live.venue || "Live Venue, India",
+        rating: live.rating || "4.9",
+        reviewCount: "1.4K reviews",
+        attendees: `${live.totalSeats || 500}+ seats`,
+        price: live.price || 499,
+        thumbnails: [
+          live.image || fallbackEvent.image,
+          "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=800&q=80",
+        ],
+      }
+    : fallbackEvent;
+
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const activeImage = selectedThumbnail || featuredEvent.image;
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const isWishlisted = wishlist?.includes(String(featuredEvent.id));
+
+
 
   return (
     <section className="bg-background px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
@@ -128,7 +152,7 @@ function Hero() {
 
               <button
                 type="button"
-                onClick={() => setIsWishlisted((prev) => !prev)}
+                onClick={() => toggleWishlist && toggleWishlist(String(featuredEvent.id))}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-text transition-colors hover:border-primary hover:text-primary"
                 aria-label="Add to Wishlist"
               >
@@ -162,7 +186,7 @@ function Hero() {
                 <button
                   key={index}
                   type="button"
-                  onClick={() => setActiveImage(thumbnail)}
+                  onClick={() => setSelectedThumbnail(thumbnail)}
                   className={`overflow-hidden rounded-xl border-2 transition-all ${
                     activeImage === thumbnail
                       ? "border-primary ring-2 ring-primary/20 scale-[1.02]"

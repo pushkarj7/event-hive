@@ -1,7 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { ALL_EVENTS } from "../member1/data/eventsData";
 import ToastContainer from "../member1/components/ToastContainer";
+import { getEvents } from "../api/apiClient";
 
 const defaultWeekly = [
   { day: "Mon", value: 38 },
@@ -30,6 +31,91 @@ export const AppProvider = ({ children }) => {
       return ALL_EVENTS.slice(0, 6);
     }
   });
+
+  const refreshEvents = useCallback(async () => {
+    try {
+      const res = await getEvents();
+      if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+        const formatted = res.data.map((evt) => {
+          const eventDate = new Date(evt.date);
+          const hasValidDate = !Number.isNaN(eventDate.getTime());
+          return {
+            ...evt,
+            id: String(evt._id || evt.id),
+            city: evt.city || (evt.location ? evt.location.split(",").pop().trim() : "India"),
+            price: Number(evt.price) || 0,
+            image:
+              evt.image && (evt.image.startsWith("http") || evt.image.startsWith("/"))
+                ? evt.image
+                : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+
+            formattedDate: hasValidDate
+              ? eventDate.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "Date TBA",
+            time: hasValidDate
+              ? eventDate.toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "",
+          };
+        });
+        setEvents(formatted);
+      }
+    } catch (err) {
+      console.warn("Could not load backend events on startup, fallback to cache:", err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    getEvents()
+      .then((res) => {
+        if (!isMounted) return;
+        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+          const formatted = res.data.map((evt) => {
+            const eventDate = new Date(evt.date);
+            const hasValidDate = !Number.isNaN(eventDate.getTime());
+            return {
+              ...evt,
+              id: String(evt._id || evt.id),
+              city: evt.city || (evt.location ? evt.location.split(",").pop().trim() : "India"),
+              price: Number(evt.price) || 0,
+              image:
+                evt.image && (evt.image.startsWith("http") || evt.image.startsWith("/"))
+                  ? evt.image
+                  : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+              formattedDate: hasValidDate
+                ? eventDate.toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "Date TBA",
+              time: hasValidDate
+                ? eventDate.toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "",
+            };
+          });
+          setEvents(formatted);
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not load backend events on startup, fallback to cache:", err.message);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const isMockBooking = (b) => {
     if (!b) return true;
     const id = String(b.id || "").toLowerCase();
@@ -139,34 +225,56 @@ export const AppProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [authUser, setAuthUser] = useState(() => {
-    try { const s = localStorage.getItem("eh_auth"); return s ? JSON.parse(s) : null; } catch { return null; }
+    try {
+      const s = localStorage.getItem("eh_auth");
+      if (!s) return null;
+      const parsed = JSON.parse(s);
+      const token = localStorage.getItem("token");
+      if (token && !parsed.token) {
+        parsed.token = token;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
   });
   const isAuthenticated = !!authUser;
-  const user = authUser || { name: "Vivek Singh", role: "Event Organizer", initial: "V" };
+  const user = authUser || { name: "User", role: "user", initial: "U" };
   const notifications = 3;
 
   const login = (payload) => {
-    // Prefer a real name, then the email local-part. A raw phone number is
-    // deliberately not used as a name — 10 digits overflow every name slot.
     const explicit = (payload.name || "").trim();
     const fromEmail = payload.email?.split("@")[0]?.trim() || "";
-    const raw = explicit || fromEmail || "Event Organizer";
+    const raw = explicit || fromEmail || "User";
     const name = raw.charAt(0).toUpperCase() + raw.slice(1);
+    const token = payload.token || localStorage.getItem("token") || "";
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+
+    const role = payload.role || "user";
+
+
     const u = {
+      id: payload.id || payload._id || "",
+      _id: payload.id || payload._id || "",
       name,
-      role: "Event Organizer",
+      role,
+      token,
       initial: name.charAt(0).toUpperCase(),
       email: payload.email || "",
       phone: payload.phone || "",
     };
     setAuthUser(u);
     localStorage.setItem("eh_auth", JSON.stringify(u));
-    showToast(`Welcome back, ${u.name}! Logged in successfully ✓`, "success");
+    showToast(`Welcome back, ${u.name}! (${role}) ✓`, "success");
     return u;
   };
+
   const logout = () => {
     setAuthUser(null);
     localStorage.removeItem("eh_auth");
+    localStorage.removeItem("token");
     showToast("Logged out successfully", "info");
   };
   const updateProfile = (patch) => {
@@ -220,8 +328,13 @@ export const AppProvider = ({ children }) => {
     return newEv;
   };
 
-  // Only events this organizer created — never the seeded ALL_EVENTS catalogue.
-  const myEvents = events.filter((e) => e.createdByUser);
+  // Events managed by this user (or all events if admin)
+  const myEvents = events.filter((e) => {
+    if (authUser?.role === "admin") return true;
+    const userId = String(authUser?.id || authUser?._id || "");
+    const organizerId = String(e.organizer?._id || e.organizer || "");
+    return (userId && organizerId && userId === organizerId) || e.createdByUser;
+  });
 
   const addBooking = (bookingOrEventId, opts = {}) => {
     let nb;
@@ -305,7 +418,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <EventContext.Provider value={{
-      events, bookings: realBookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
+      events, setEvents, refreshEvents, bookings: realBookings, wishlist, toggleWishlist, removeFromWishlist, isWishlisted,
       theme, toggleTheme, toasts, showToast, removeToast,
       sidebarOpen, setSidebarOpen, toggleSidebar: () => setSidebarOpen((p) => !p),
       weekly, searchQuery, setSearchQuery, addEvent, myEvents, addBooking, cancelBooking,

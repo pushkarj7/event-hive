@@ -1,25 +1,106 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
-import { ArrowLeft, Sparkles, MapPin, CalendarDays, Tag, IndianRupee, Image, FileText, Check, LayoutDashboard, UserRound, Home } from "lucide-react";
+import { ArrowLeft, Sparkles, MapPin, CalendarDays, Tag, IndianRupee, Image, FileText, Check, LayoutDashboard, UserRound, Home, Upload, Loader2 } from "lucide-react";
 import { CATEGORIES_DATA } from "../../member1/components/EventCategories";
 import ThemeToggle from "../../member1/components/ThemeToggle";
+import { createEventApi, uploadEventImageApi } from "../../api/apiClient";
 
 const CreateEvent = () => {
-  const { addEvent } = useAppStore();
+  const { addEvent, refreshEvents, authUser } = useAppStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: "", category: "Music", location: "", price: "", date: "", image: "", description: "" });
+  const [form, setForm] = useState({
+    title: "",
+    category: "Music",
+    location: "",
+    price: "",
+    date: "",
+    image: "",
+    imageFileId: "",
+    description: "",
+    totalSeats: "100",
+  });
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  const submit = (e) => {
+  const token = localStorage.getItem("token") || authUser?.token;
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!token) {
+      setErr("Please log in as Admin/Organizer first to upload images to ImageKit.");
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      setErr("");
+      const res = await uploadEventImageApi(file, token);
+      if (res?.data?.url) {
+        setForm((prev) => ({
+          ...prev,
+          image: res.data.url,
+          imageFileId: res.data.fileId || "",
+        }));
+      }
+    } catch (uploadErr) {
+      console.error("Image upload failed:", uploadErr);
+      setErr(uploadErr.message || "Failed to upload image to ImageKit CDN. You can still paste an image URL.");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const submit = async (e) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.location.trim() || !form.price || !form.date) { setErr("Please fill all required fields *"); return; }
+    if (!form.title.trim() || !form.location.trim() || !form.price || !form.date) {
+      setErr("Please fill all required fields *");
+      return;
+    }
+
+    if (!token) {
+      setErr("Authentication required: Please log in with an Admin or Organizer account so the event is saved to MongoDB Atlas.");
+      return;
+    }
+
+
     setErr("");
-    const ev = { title: form.title, category: form.category, location: form.location, price: Number(form.price), date: form.date, image: form.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87", description: form.description || "New event created from dashboard" };
-    const created = addEvent(ev);
-    setOk(created);
-    setTimeout(() => navigate("/dashboard"), 1400);
+    setIsSubmitting(true);
+
+    const ev = {
+      title: form.title.trim(),
+      category: form.category,
+      location: form.location.trim(),
+      price: Number(form.price),
+      date: form.date,
+      totalSeats: Number(form.totalSeats) || 100,
+      image: form.image?.trim() || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+      imageFileId: form.imageFileId || "",
+      description: form.description?.trim() || "New event created from dashboard",
+    };
+
+    try {
+      const res = await createEventApi(ev, token);
+      if (!res?.success) {
+        throw new Error(res?.message || "Failed to create event on server");
+      }
+
+      addEvent(res.data || ev);
+      if (refreshEvents) {
+        await refreshEvents();
+      }
+      setOk(res.data || ev);
+      setTimeout(() => navigate("/events"), 1400);
+    } catch (apiErr) {
+      console.error("Create event error:", apiErr);
+      setErr(apiErr.message || "Unable to save event to database. Please check your credentials.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,6 +163,22 @@ const CreateEvent = () => {
               <div className="p-6 sm:p-7">
                 {err && <p className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"><span className="h-2 w-2 rounded-full bg-red-500" /> {err}</p>}
 
+                {!token && (
+                  <div className="mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-xs text-amber-900 shadow-xs">
+                    <div>
+                      <span className="font-extrabold text-amber-950">Notice: Authentication Needed</span>
+                      <p className="text-amber-800 mt-0.5">Please log in as Admin to save your created events directly into MongoDB Atlas.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/login")}
+                      className="shrink-0 rounded-xl bg-amber-600 px-3.5 py-1.5 font-bold text-white shadow-xs hover:bg-amber-700 transition"
+                    >
+                      Log In as Admin
+                    </button>
+                  </div>
+                )}
+
                 <div>
                   <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700"><FileText size={12} className="text-indigo-600" /> Event Title *</label>
                   <input value={form.title} onChange={e=>setForm({...form,title:e.target.value})} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition placeholder:text-slate-400" placeholder="e.g. Tech Conference 2026" />
@@ -138,10 +235,48 @@ const CreateEvent = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700"><Image size={12} className="text-violet-600" /> Cover Image URL</label>
-                  <input value={form.image} onChange={e=>setForm({...form,image:e.target.value})} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition placeholder:text-slate-400" placeholder="https://images.unsplash.com/..." />
-                  <p className="mt-1 text-[11px] text-slate-400">Leave empty for default cover. Paste Unsplash / CDN link.</p>
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700">
+                      <Image size={12} className="text-violet-600" /> Cover Image
+                    </label>
+                    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50/80 px-2.5 py-1 text-[11px] font-bold text-indigo-700 hover:bg-indigo-100 transition shadow-2xs">
+                      {isUploadingImage ? (
+                        <>
+                          <Loader2 size={12} className="animate-spin text-indigo-600" />
+                          <span>Uploading to CDN...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={12} className="text-indigo-600" />
+                          <span>Upload File (ImageKit)</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={isUploadingImage}
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                  <input
+                    value={form.image}
+                    onChange={(e) => setForm({ ...form, image: e.target.value })}
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition placeholder:text-slate-400"
+                    placeholder="Upload image above or paste image URL (Unsplash / CDN)..."
+                  />
+                  <p className="mt-1 text-[11px] text-slate-400">
+                    {form.imageFileId ? (
+                      <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                        <Check size={11} strokeWidth={3} /> Uploaded to ImageKit CDN successfully!
+                      </span>
+                    ) : (
+                      "Supports direct file upload (JPEG/PNG/WebP up to 5MB) or external URL."
+                    )}
+                  </p>
                 </div>
+
 
                 <div className="mt-4">
                   <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-slate-700"><FileText size={12} className="text-slate-500" /> Description</label>
@@ -149,10 +284,19 @@ const CreateEvent = () => {
                 </div>
 
                 <div className="mt-6 flex gap-3">
-                  <button type="submit" className="flex flex-1 items-center justify-center gap-2 rounded-full bg-linear-to-r from-indigo-600 to-violet-600 py-3 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(79,70,229,0.35)] transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-[0_12px_32px_rgba(79,70,229,0.45)] hover:-translate-y-0.5 active:translate-y-0">
-                    <Sparkles size={14} /> Create Event
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-full bg-linear-to-r from-indigo-600 to-violet-600 py-3 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(79,70,229,0.35)] transition hover:from-indigo-700 hover:to-violet-700 disabled:opacity-60 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+                  >
+                    {isSubmitting ? (
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    ) : (
+                      <Sparkles size={14} />
+                    )}
+                    {isSubmitting ? "Saving to Database..." : "Create Event"}
                   </button>
-                  <button type="button" onClick={()=>navigate(-1)} className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">Cancel</button>
+                  <button type="button" onClick={() => navigate(-1)} className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">Cancel</button>
                 </div>
                 <p className="mt-3 text-center text-[11px] text-slate-400">Instant — appears on Home, Events & Dashboard right away</p>
               </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo ,useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Search,
@@ -10,11 +10,12 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
-import {CATEGORIES,CITIES } from "../data/eventsData";
+import { CATEGORIES, CITIES } from "../data/eventsData";
 import EventListingCard from "../components/EventListingCard";
 import EventFilter from "../components/EventFilter";
 import BookingModal from "../components/BookingModal";
 import { useAppStore } from "../../store/EventContext";
+import { getEvents } from "../../api/apiClient";
 
 export default function Events() {
   const [searchParams] = useSearchParams();
@@ -42,60 +43,78 @@ export default function Events() {
   const [sortBy, setSortBy] = useState("popular");
   const [viewMode, setViewMode] = useState("list"); // 'list' or 'grid'
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const { wishlist, toggleWishlist } = useAppStore();
+  const { wishlist, toggleWishlist, setEvents: setStoreEvents } = useAppStore();
   const [selectedEventForBooking, setSelectedEventForBooking] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [apiError ,setApiError] = useState("");
-  useEffect(()=> {
-   const fetchEvents = async () => {
-     try{
-      setLoading(true);
-      setApiError("");
-      const response = await fetch(
-        "http://localhost:5000/api/events"
-      );
-      if (!response.ok){
-        throw new Error(`Request failed:${response.status}`);
+  const [apiError, setApiError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadData() {
+      try {
+        const result = await getEvents();
+        if (!isMounted) return;
+
+        if (!result.success || !Array.isArray(result.data)) {
+          throw new Error("Invalid events API response");
+        }
+        const formattedEvents = result.data.map((event) => {
+          const eventDate = new Date(event.date);
+          const hasValidDate = !Number.isNaN(eventDate.getTime());
+          const hasValidImage =
+            typeof event.image === "string" &&
+            (event.image.startsWith("http") || event.image.startsWith("/")) &&
+            !event.image.includes("PASTE_YOUR_IMAGEKIT");
+
+          return {
+            ...event,
+            id: String(event._id || event.id),
+            city: event.city || (event.location ? event.location.split(",").pop().trim() : "India"),
+            price: Number(event.price) || 0,
+            image: hasValidImage
+              ? event.image
+              : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+            formattedDate: hasValidDate
+              ? eventDate.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "Date TBA",
+            time: hasValidDate
+              ? eventDate.toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "",
+          };
+        });
+
+        setEvents(formattedEvents);
+        if (setStoreEvents) {
+          setStoreEvents(formattedEvents);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Fetch events error:", error);
+          setApiError(error.message || "Unable to load events");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      const result = await response.json();
-      if (!result.success || !Array.isArray(result.data)){
-        throw new Error("Invalid events API response");
-      }
-      const formattedEvents = result.data.map((event)=>{
-       const eventDate = new Date(event.date);
-       const hasValidDate = !Number.isNaN(eventDate.getTime());
-       return{
-        ...event,
-        id: String(event._id),
-        city: event.city || event.location || "",
-        price: Number(event.price),
-        image: event.image || "",
-        formattedDate: hasValidDate
-        ? eventDate.toLocaleDateString("en-IN",{
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        })
-        :"Date TBA",
-        time: hasValidDate
-        ? eventDate.toLocaleTimeString("en-IN",{
-          hour:"2-digit",
-          minute:"2-digit",
-        })
-        :"",
-       };
-      });
-      setEvents(formattedEvents);
-     }catch(error){
-      console.error("Fetch events error:",error);
-      setApiError(error.message || "Unable to load events");
-     }finally{
-      setLoading(false);
-     }
-   };
-   fetchEvents();
-  },[]);
+    }
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [setStoreEvents]);
+
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedCategory("all");
@@ -391,9 +410,9 @@ export default function Events() {
                 <p>Unable to load events.</p>
                 <p className="mt-2 text-sm">{apiError}</p>
                 <button 
-                 type="button"
-                 onClick={()=>window.location.reload()}
-                 className="mt-4 rounded-xl bg-primary px-5 py-2 text-white"
+                  type="button"
+                  onClick={fetchEvents}
+                  className="mt-4 rounded-xl bg-primary px-5 py-2 text-white transition-opacity hover:opacity-90"
                 >
                   Retry
                 </button>

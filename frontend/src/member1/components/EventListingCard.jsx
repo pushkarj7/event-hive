@@ -1,4 +1,5 @@
 import { Heart, MapPin, Calendar, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function EventListingCard({
   event,
@@ -69,7 +70,9 @@ export default function EventListingCard({
 
         <div className="flex flex-1 flex-col p-4">
           <h3 className="line-clamp-1 text-base font-bold text-text group-hover:text-primary transition-colors">
-            {event.title}
+            <Link to={`/event/${event.id}`} className="hover:underline">
+              {event.title}
+            </Link>
           </h3>
 
           <div className="mt-2 space-y-1 text-xs text-text-secondary">
@@ -138,7 +141,9 @@ export default function EventListingCard({
           {/* Title Row with Heart button */}
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-base font-bold text-text transition-colors group-hover:text-primary sm:text-lg">
-              {event.title}
+              <Link to={`/event/${event.id}`} className="hover:underline">
+                {event.title}
+              </Link>
             </h3>
             <button
               type="button"

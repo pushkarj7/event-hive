@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-const generateAccessToken = (userId) => {
+const generateAccessToken = (userId, role = "user") => {
   const secret = process.env.JWT_SECRET;
 
   if (!secret) {
@@ -10,11 +10,12 @@ const generateAccessToken = (userId) => {
   }
 
   return jwt.sign(
-    { sub: userId.toString() },
+    { sub: userId.toString(), role },
     secret,
-    { expiresIn: "15m" }
+    { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
   );
 };
+
 
 const isValidEmail = (email) => {
   return (
@@ -94,7 +95,7 @@ export const registerUser = async (req, res) => {
     });
 
     // 4. Generate an access token.
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user._id, user.role);
 
     // 5. Return safe user data.
     return res.status(201).json({
@@ -191,7 +192,7 @@ export const loginUser = async (req, res) => {
     }
 
     // 5. Generate an access token.
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user._id, user.role);
 
     // 6. Return safe user data.
     return res.status(200).json({

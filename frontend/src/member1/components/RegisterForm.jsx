@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import EventHiveLogo from "./EventHiveLogo";
+import { registerApi } from "../../api/apiClient";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const RegisterForm = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
+  const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,15 +54,42 @@ const RegisterForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setServerError("");
     const validationErrors = validateForm();
     setError(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      if (registerMethod === "email") login({ email, name });
-      else login({ phone, name });
-      navigate("/profile");
+      if (registerMethod === "email") {
+        const res = await registerApi({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+        });
+
+        const token = res.data?.accessToken;
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+
+        const userData = {
+          ...(res.data?.user || {}),
+          id: res.data?.user?.id || res.data?.user?._id,
+          name: res.data?.user?.name || name,
+          email: res.data?.user?.email || email,
+          role: res.data?.user?.role || "user",
+          token,
+        };
+
+        login(userData);
+        navigate("/events");
+      } else {
+        login({ phone, name });
+        navigate("/events");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      setServerError(err.message || "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +98,8 @@ const RegisterForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative w-full max-w-[430px] rounded-[24px] border border-slate-200/90 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.08)] sm:p-8 font-sans"
+      className="relative w-full max-w-107.5 rounded-[24px] border border-slate-200/90 bg-white p-7 shadow-[0_20px_50px_rgba(15,23,42,0.08)] sm:p-8 font-sans"
+
     >
       <button
         type="button"
@@ -124,6 +154,13 @@ const RegisterForm = () => {
           With Mobile
         </button>
       </div>
+
+      {serverError && (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-600 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+          <span>{serverError}</span>
+        </div>
+      )}
 
       <div className="mt-5 space-y-3.5">
         <div>

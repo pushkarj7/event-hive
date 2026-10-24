@@ -7,11 +7,14 @@ import {
   X,
   ArrowRight,
   ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppStore } from "../../store/EventContext";
 import EventHiveLogo from "./EventHiveLogo";
+import { apiRequest } from "../../api/apiClient";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -49,12 +52,28 @@ const LoginForm = () => {
     if (Object.keys(validationErrors).length > 0) return;
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      if (loginMethod === "email") login({ email, name: email.split("@")[0] });
-      // Do not use the phone number as the display name — it is 10 unbroken
-      // digits and overflows every name slot in the UI.
-      else login({ phone });
-      navigate("/profile");
+      if (loginMethod === "email") {
+        const res = await apiRequest("/auth/login", {
+          method: "POST",
+          body: { email: email.trim().toLowerCase(), password },
+        });
+
+        if (res?.success && res.data?.accessToken) {
+          localStorage.setItem("token", res.data.accessToken);
+          login({
+            ...res.data.user,
+            token: res.data.accessToken,
+          });
+          navigate("/events");
+          return;
+        }
+      } else {
+        login({ phone });
+        navigate("/profile");
+      }
+    } catch (apiErr) {
+      console.error("Login failed:", apiErr);
+      setError({ general: apiErr.message || "Invalid email or password. Please try again." });
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +138,15 @@ const LoginForm = () => {
         </button>
       </div>
 
-      <div className="mt-5 space-y-3.5">
+      {error.general && (
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-600">
+          <AlertCircle size={16} className="shrink-0 text-red-500" />
+          <span>{error.general}</span>
+        </div>
+      )}
+
+      <div className="mt-4 space-y-3.5">
+
         {loginMethod === "email" ? (
           <>
             <div>

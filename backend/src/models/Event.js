@@ -35,6 +35,10 @@ const eventSchema = new mongoose.Schema(
     type:String,
     default:"",
   },
+  imageFileId:{
+    type:String,
+    default:"",
+  },
   price:{
     type:Number,
     required:true,
@@ -61,9 +65,15 @@ const eventSchema = new mongoose.Schema(
     default:"upcoming",
   },
 },
- {
-  timestamps:true,
- }
+  {
+    timestamps: true,
+  }
 );
-const Event = mongoose.model("Event",eventSchema);
+
+// High-performance compound & text indexes
+eventSchema.index({ category: 1, status: 1, date: 1 });
+eventSchema.index({ organizer: 1 });
+eventSchema.index({ title: "text", description: "text", artist: "text", location: "text" });
+
+const Event = mongoose.model("Event", eventSchema);
 export default Event;
