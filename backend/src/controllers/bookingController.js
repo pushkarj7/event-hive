@@ -1,6 +1,6 @@
-import { Booking } from "../models/Booking.js";
-import { Event } from "../models/Event.js";
+import { createBookingService, getUserBookingsService, cancelBookingService } from "../services/bookingService.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
+import { generateTicketPDF } from "../utils/generateTicket.js";
 
 // @desc    Create new booking
 // @route   POST /api/bookings
@@ -12,33 +12,10 @@ export const createBooking = async (req, res) => {
       return errorResponse(res, "User ID, Event ID and tickets count are required", 400);
     }
 
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return errorResponse(res, "Event not found", 404);
-    }
-
-    if (event.ticketsSold + Number(numberOfTickets) > event.capacity) {
-      return errorResponse(res, "Not enough tickets available", 400);
-    }
-
-    const totalAmount = event.price * Number(numberOfTickets);
-
-    const booking = await Booking.create({
-      user: userId,
-      event: eventId,
-      numberOfTickets: Number(numberOfTickets),
-      totalAmount,
-      status: "confirmed",
-      paymentStatus: "paid",
-    });
-
-    // Update tickets sold on event
-    event.ticketsSold += Number(numberOfTickets);
-    await event.save();
-
+    const booking = await createBookingService({ userId, eventId, numberOfTickets });
     return successResponse(res, "Booking confirmed successfully", booking, 201);
   } catch (error) {
-    return errorResponse(res, "Failed to create booking", 500, error);
+    return errorResponse(res, error.message || "Failed to create booking", 500, error);
   }
 };
 
@@ -46,10 +23,7 @@ export const createBooking = async (req, res) => {
 // @route   GET /api/bookings/user/:userId
 export const getUserBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.params.userId })
-      .populate("event")
-      .sort({ createdAt: -1 });
-
+    const bookings = await getUserBookingsService(req.params.userId);
     return successResponse(res, "User bookings fetched", bookings);
   } catch (error) {
     return errorResponse(res, "Failed to fetch bookings", 500, error);
@@ -60,27 +34,33 @@ export const getUserBookings = async (req, res) => {
 // @route   PUT /api/bookings/:id/cancel
 export const cancelBooking = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
+    const booking = await cancelBookingService(req.params.id);
+    return successResponse(res, "Booking cancelled successfully", booking);
+  } catch (error) {
+    return errorResponse(res, error.message || "Failed to cancel booking", 500, error);
+  }
+};
+
+// @desc    Get ticket for booking
+// @route   GET /api/bookings/:id/ticket
+export const getTicket = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate("event");
     if (!booking) {
       return errorResponse(res, "Booking not found", 404);
     }
-
-    if (booking.status === "cancelled") {
-      return errorResponse(res, "Booking is already cancelled", 400);
-    }
-
-    booking.status = "cancelled";
-    await booking.save();
-
-    // Revert tickets count on event
-    const event = await Event.findById(booking.event);
-    if (event) {
-      event.ticketsSold = Math.max(0, event.ticketsSold - booking.numberOfTickets);
-      await event.save();
-    }
-
-    return successResponse(res, "Booking cancelled successfully", booking);
+    const ticket = await generateTicketPDF({
+      _id: booking._id,
+      bookingId: booking._id,
+      eventId: booking.event.title,
+      numberOfTickets: booking.numberOfTickets,
+      totalAmount: booking.totalAmount,
+      status: booking.status,
+      createdAt: booking.createdAt,
+    });
+    res.contentType("application/pdf");
+    res.send(ticket);
   } catch (error) {
-    return errorResponse(res, "Failed to cancel booking", 500, error);
+    return errorResponse(res, "Failed to generate ticket", 500, error);
   }
 };
