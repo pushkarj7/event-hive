@@ -5,6 +5,7 @@ import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import { notFound, errorHandler } from "./middlewares/errorMiddleware.js";
 
+
 const app = express();
 
 const allowedOrigins = [
@@ -34,6 +35,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/events", eventRoutes);
 app.use("/api/events", eventRoutes); // Alias for compatibility
+
 
 // Error Middlewares
 app.use(notFound);
